@@ -6,6 +6,9 @@ import LinkCard from '@/components/LinkCard'
 import { useLinkStore } from '@/store/LinkStore';
 import { useEffect } from 'react';
 import NoLink from './NoLink';
+import useAuthStore from '@/store/AuthStore'
+import AuthFrom from './AuthFrom';
+
 
 
 // const demoLinks = [
@@ -36,6 +39,7 @@ import NoLink from './NoLink';
 // ]
 
 const Home = () => {
+  const {isAuthenticated} = useAuthStore();
   const { links,fetchLinks,isLoading } = useLinkStore();
   const demoLinks= links;
   useEffect(() => {
@@ -47,6 +51,7 @@ const Home = () => {
   
   
   return (<div>
+    {isAuthenticated ? 
      
   
     <main className="mx-auto max-w-7xl px-6 py-10">
@@ -85,6 +90,7 @@ const Home = () => {
         </section>
     }
     </main>
+      : <AuthFrom />}
     </div>
   )
 }
