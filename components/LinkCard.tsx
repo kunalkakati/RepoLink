@@ -10,17 +10,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { ExternalLink, Copy } from "lucide-react"
+import { ExternalLink, Copy, Trash2 } from "lucide-react"
+import { useDelete } from "@/lib/DeleteContext"
+import { useLinkStore } from "@/store/LinkStore"
 
 interface LinkCardProps {
-  title: string
-  url: string
+  id: string
+  name: string
+  href: string
   tags?: string[]
   description?: string
 }
 
-export default function LinkCard({ title, url, tags = [], description }: LinkCardProps) {
+export default function LinkCard({ id, name: title, href: url, tags = [], description }: LinkCardProps) {
   const [copied, setCopied] = useState(false)
+  const { enableDelete } = useDelete()
+  const { deleteLink } = useLinkStore()
 
   const handleCopy = async () => {
     if (!navigator?.clipboard) return
@@ -35,19 +40,37 @@ export default function LinkCard({ title, url, tags = [], description }: LinkCar
     }
   }
 
+  const handleDelete = async () => {
+    if (confirm('Are you sure you want to delete this link?')) {
+      await deleteLink(id)
+    }
+  }
+
   return (
     <Card size="xs" className="max-w-xs relative">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
           <CardTitle className="text-sm font-semibold tracking-tight">{title}</CardTitle>
-          <button
-            type="button"
-            onClick={handleCopy}
-            aria-label="Copy name"
-            className="inline-flex h-8 items-center justify-center rounded-full border border-border bg-muted px-2 text-[11px] font-semibold text-foreground transition hover:bg-muted/95 cursor-pointer"
-          >
-            {copied ? "Copied" : <Copy className="h-3.5 w-3.5" />}
-          </button>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={handleCopy}
+              aria-label="Copy name"
+              className="inline-flex h-8 items-center justify-center rounded-full border border-border bg-muted px-2 text-[11px] font-semibold text-foreground transition hover:bg-muted/95 cursor-pointer"
+            >
+              {copied ? "Copied" : <Copy className="h-3.5 w-3.5" />}
+            </button>
+            {enableDelete && (
+              <button
+                type="button"
+                onClick={handleDelete}
+                aria-label="Delete link"
+                className="inline-flex h-8 items-center justify-center rounded-full border border-border bg-destructive px-2 text-[11px] font-semibold text-destructive-foreground transition hover:bg-destructive/95 cursor-pointer"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
         </div>
       </CardHeader>
 

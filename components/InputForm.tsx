@@ -7,21 +7,19 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
-// import FormComponent from './FormComponent';
-
-
-// ============================================================================
-// MAIN COMPONENT
-// ============================================================================
+import { LinkInsertType,} from '@/db/schema';
+import { useLinkStore } from '@/store/LinkStore';
 
 export default function App() {
-  const [formData, setFormData] = useState({
+  const { addLink } = useLinkStore();
+  const [formData, setFormData] = useState<LinkInsertType>({
     name: '',
     tag: '',
     href: '',
     description: ''
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -33,6 +31,8 @@ export default function App() {
     
     // In a real Next.js app, you would typically pass this to a Server Action
     // e.g., await submitLinkData(formData);
+    addLink(formData);
+    
     console.log("Form submitted with data:", formData);
     
     // Show success state

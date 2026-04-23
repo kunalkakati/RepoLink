@@ -1,35 +1,49 @@
+'use client'
+
 import Link from 'next/link'
 import { GridIcon, Plus } from 'lucide-react'
 import LinkCard from '@/components/LinkCard'
+import { useLinkStore } from '@/store/LinkStore';
+import { useEffect } from 'react';
 
-const demoLinks = [
-  {
-    title: 'shadcn/ui documentation',
-    url: 'https://ui.shadcn.com',
-    description: 'A minimal UI toolkit built with Tailwind and Radix.',
-    tags: ['UI', 'components', 'react'],
-  },
-  {
-    title: 'Tailwind CSS',
-    url: 'https://tailwindcss.com',
-    description: 'Utility-first CSS for modern responsive design.',
-    tags: ['CSS', 'design', 'utility'],
-  },
-  {
-    title: 'Next.js Docs',
-    url: 'https://nextjs.org',
-    description: 'Production-ready React framework for hybrid rendering.',
-    tags: ['React', 'SSR', 'static'],
-  },
-  {
-    title: 'MDN Web Docs',
-    url: 'https://developer.mozilla.org',
-    description: 'Comprehensive documentation and learning resources.',
-    tags: ['reference', 'web', 'learning'],
-  },
-]
+// const demoLinks = [
+//   {
+//     title: 'shadcn/ui documentation',
+//     url: 'https://ui.shadcn.com',
+//     description: 'A minimal UI toolkit built with Tailwind and Radix.',
+//     tags: ['UI', 'components', 'react'],
+//   },
+//   {
+//     title: 'Tailwind CSS',
+//     url: 'https://tailwindcss.com',
+//     description: 'Utility-first CSS for modern responsive design.',
+//     tags: ['CSS', 'design', 'utility'],
+//   },
+//   {
+//     title: 'Next.js Docs',
+//     url: 'https://nextjs.org',
+//     description: 'Production-ready React framework for hybrid rendering.',
+//     tags: ['React', 'SSR', 'static'],
+//   },
+//   {
+//     title: 'MDN Web Docs',
+//     url: 'https://developer.mozilla.org',
+//     description: 'Comprehensive documentation and learning resources.',
+//     tags: ['reference', 'web', 'learning'],
+//   },
+// ]
 
 const Home = () => {
+  const { links,fetchLinks,isLoading } = useLinkStore();
+  const demoLinks = links;
+  useEffect(() => {
+      fetchLinks();
+  }, [fetchLinks]);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  
+  
   return (
     <main className="mx-auto max-w-7xl px-6 py-10">
       <section className="rounded-3xl border border-border bg-white/85 p-8 shadow-sm shadow-slate-200/60 backdrop-blur-sm transition hover:shadow-lg">
@@ -62,7 +76,7 @@ const Home = () => {
 
       <section className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         {demoLinks.map((link) => (
-          <LinkCard key={link.url} {...link} />
+          <LinkCard key={link.id} id={link.id} name={link.name} href={link.href} tags={link.tag ? link.tag.split(',') : []} description={link.description} />
         ))}
       </section>
     </main>

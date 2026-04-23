@@ -1,7 +1,13 @@
+'use client'
+
 import { Bookmark, HomeIcon, PlusIcon } from 'lucide-react'
 import Link from 'next/link'
+import { useDelete } from '@/lib/DeleteContext'
+import { Checkbox } from '@/components/ui/checkbox'
 
 const Navbar = () => {
+  const { enableDelete, setEnableDelete } = useDelete()
+
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-xl shadow-sm">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4">
@@ -13,6 +19,16 @@ const Navbar = () => {
         </Link>
 
         <nav className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="enable-delete"
+              checked={enableDelete}
+              onCheckedChange={(checked) => setEnableDelete(checked as boolean)}
+            />
+            <label htmlFor="enable-delete" className="text-sm font-medium">
+              Enable Delete
+            </label>
+          </div>
           <Link
             href="/"
             className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-foreground transition hover:bg-muted"
