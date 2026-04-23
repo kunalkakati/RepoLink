@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { ExternalLink, Copy, Trash2 } from "lucide-react"
-import { useDelete } from "@/lib/DeleteContext"
+import { useDeleteStore } from "@/store/DeleteStore"
 import { useLinkStore } from "@/store/LinkStore"
 
 interface LinkCardProps {
@@ -24,7 +24,7 @@ interface LinkCardProps {
 
 export default function LinkCard({ id, name: title, href: url, tags = [], description }: LinkCardProps) {
   const [copied, setCopied] = useState(false)
-  const { enableDelete } = useDelete()
+  const { enableDelete } = useDeleteStore()
   const { deleteLink } = useLinkStore()
 
   const handleCopy = async () => {

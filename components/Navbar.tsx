@@ -2,11 +2,11 @@
 
 import { Bookmark, HomeIcon, PlusIcon } from 'lucide-react'
 import Link from 'next/link'
-import { useDelete } from '@/lib/DeleteContext'
+import { useDeleteStore } from '@/store/DeleteStore'
 import { Checkbox } from '@/components/ui/checkbox'
 
 const Navbar = () => {
-  const { enableDelete, setEnableDelete } = useDelete()
+  const { enableDelete, setEnableDelete } = useDeleteStore()
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-xl shadow-sm">

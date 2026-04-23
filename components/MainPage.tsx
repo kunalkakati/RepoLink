@@ -5,6 +5,8 @@ import { GridIcon, Plus } from 'lucide-react'
 import LinkCard from '@/components/LinkCard'
 import { useLinkStore } from '@/store/LinkStore';
 import { useEffect } from 'react';
+import NoLink from './NoLink';
+
 
 // const demoLinks = [
 //   {
@@ -35,7 +37,7 @@ import { useEffect } from 'react';
 
 const Home = () => {
   const { links,fetchLinks,isLoading } = useLinkStore();
-  const demoLinks = links;
+  const demoLinks= links;
   useEffect(() => {
       fetchLinks();
   }, [fetchLinks]);
@@ -44,7 +46,9 @@ const Home = () => {
   }
   
   
-  return (
+  return (<div>
+     
+  
     <main className="mx-auto max-w-7xl px-6 py-10">
       <section className="rounded-3xl border border-border bg-white/85 p-8 shadow-sm shadow-slate-200/60 backdrop-blur-sm transition hover:shadow-lg">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
@@ -73,13 +77,15 @@ const Home = () => {
           </div>
         </div>
       </section>
-
-      <section className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        {demoLinks.map((link) => (
-          <LinkCard key={link.id} id={link.id} name={link.name} href={link.href} tags={link.tag ? link.tag.split(',') : []} description={link.description} />
-        ))}
-      </section>
+     {(demoLinks.length===0) ? <NoLink /> : 
+        <section className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          {demoLinks.map((link) => (
+            <LinkCard key={link.id} id={link.id} name={link.name} href={link.href} tags={link.tag ? link.tag.split(',') : []} description={link.description} />
+          ))}
+        </section>
+    }
     </main>
+    </div>
   )
 }
 
