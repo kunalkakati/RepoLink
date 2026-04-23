@@ -54,8 +54,8 @@ const Home = () => {
     {isAuthenticated ? 
      
   
-    <main className="mx-auto max-w-7xl px-6 py-10">
-      <section className="rounded-3xl border border-border bg-white/85 p-8 shadow-sm shadow-slate-200/60 backdrop-blur-sm transition hover:shadow-lg">
+    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-10">
+      <section className="rounded-3xl border border-border bg-white/85 p-6 shadow-sm shadow-slate-200/60 backdrop-blur-sm transition hover:shadow-lg sm:p-8">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-primary">
@@ -83,7 +83,7 @@ const Home = () => {
         </div>
       </section>
      {(demoLinks.length===0) ? <NoLink /> : 
-        <section className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <section className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {demoLinks.map((link) => (
             <LinkCard key={link.id} id={link.id} name={link.name} href={link.href} tags={link.tag ? link.tag.split(',') : []} description={link.description} />
           ))}

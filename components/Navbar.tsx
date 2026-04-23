@@ -10,7 +10,7 @@ const Navbar = () => {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-xl shadow-sm">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4">
+      <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 px-4 py-4 sm:flex-row sm:items-center sm:px-6">
         <Link href="/" className="inline-flex items-center gap-3 text-lg font-semibold text-foreground">
           <span className="grid h-10 w-10 place-items-center rounded-3xl bg-slate-950 text-white shadow-sm">
             <Bookmark className="h-4 w-4" />
@@ -18,7 +18,7 @@ const Navbar = () => {
           LinkVault
         </Link>
 
-        <nav className="flex flex-wrap items-center gap-2">
+        <nav className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:gap-2">
           <div className="flex items-center gap-2">
             <Checkbox
               id="enable-delete"

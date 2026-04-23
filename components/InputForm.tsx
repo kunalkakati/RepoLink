@@ -47,9 +47,9 @@ export default function App() {
 
   return (<div>
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
-      <Card className="w-full max-w-lg p-6">
+      <Card className="w-full max-w-lg rounded-[28px] p-6 sm:p-8">
         <div className="flex flex-col space-y-1.5 pb-6">
-          <h3 className="font-semibold leading-none tracking-tight text-xl flex items-center gap-2">
+          <h3 className="font-semibold leading-none tracking-tight text-xl flex flex-col gap-2 sm:flex-row sm:items-center">
             <Link2 className="w-5 h-5 text-slate-500" />
             Add New Resource
           </h3>

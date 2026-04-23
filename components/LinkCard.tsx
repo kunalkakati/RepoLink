@@ -47,11 +47,11 @@ export default function LinkCard({ id, name: title, href: url, tags = [], descri
   }
 
   return (
-    <Card size="xs" className="max-w-xs relative">
+    <Card size="xs" className="w-full max-w-xs min-w-0 shrink-0 relative">
       <CardHeader className="pb-3">
-        <div className="flex items-start justify-between gap-3">
-          <CardTitle className="text-sm font-semibold tracking-tight">{title}</CardTitle>
-          <div className="flex gap-2">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <CardTitle className="text-sm font-semibold tracking-tight break-words">{title}</CardTitle>
+          <div className="flex flex-wrap items-center gap-2 justify-end">
             <button
               type="button"
               onClick={handleCopy}
