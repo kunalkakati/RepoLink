@@ -1,15 +1,19 @@
 import db from "./db";
 import { links } from "./schema";
-import { seedLinks } from "./dummyFata";
+// import { seedLinks } from "./dummyFata";
+// import useAuthStore from "@/store/AuthStore";
+import {registerUser} from "@/lib/action";
+
+
 
 async function main() {
+    
     try {
-        await db.insert(links).values(seedLinks);
+        await registerUser("1209");
+        console.log("Seeded successfully.");
     } catch (error) {
         console.log(error);
-        
     }
-  console.log("Seeded successfully.");
 }
 
 main().catch(console.error);
