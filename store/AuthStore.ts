@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { registerUser,loginUser } from "@/lib/action";
+import { loginUser } from "@/lib/action";
 
 
 interface auth{
