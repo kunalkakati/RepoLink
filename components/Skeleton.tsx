@@ -1,7 +1,7 @@
 export const SkeletonCard = () => (
   <div className="h-48 bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden animate-pulse">
     {/* Top accent bar skeleton */}
-    <div className="h-[2px] w-full bg-slate-200"></div>
+    <div className="h-0.5 w-full bg-slate-200"></div>
 
     {/* Header skeleton */}
     <div className="px-4 pt-3 pb-1.5">
