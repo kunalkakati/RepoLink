@@ -80,7 +80,7 @@ export default function LinkCard({
                 type="button"
                 onClick={handleDelete}
                 aria-label="Delete link"
-                className="h-6 w-6 flex items-center justify-center rounded-md text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all duration-150"
+                className="h-6 w-6 flex items-center justify-center rounded-md text-red-500 hover:bg-red-50 transition-all duration-150"
               >
                 <Trash2 className="h-3 w-3" />
               </button>
