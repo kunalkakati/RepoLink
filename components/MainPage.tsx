@@ -39,7 +39,6 @@ const Home = () => {
                       name={link.name}
                       href={link.href}
                       tags={link.tag ? link.tag.split(",") : []}
-                      description={link.description}
                       onTagClick={selectTag}
                     />
                   ))}
