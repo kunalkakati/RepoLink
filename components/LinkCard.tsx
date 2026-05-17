@@ -1,21 +1,25 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { ExternalLink, Copy, Trash2, Check } from "lucide-react"
-import { useDeleteStore } from "@/store/DeleteStore"
-import { useLinkStore } from "@/store/LinkStore"
-import ReadMore from "./UtilityComponents/ReadMore"
-import { smallint } from "drizzle-orm/gel-core"
+import { useState } from "react";
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { ExternalLink, Copy, Trash2, Check } from "lucide-react";
+import { useDeleteStore } from "@/store/DeleteStore";
+import { useLinkStore } from "@/store/LinkStore";
+import ReadMore from "./UtilityComponents/ReadMore";
 
 interface LinkCardProps {
-  id: string
-  name: string
-  href: string
-  tags?: string[]
-  description?: string
+  id: string;
+  name: string;
+  href: string;
+  tags?: string[];
+  description?: string;
+  onTagClick?: (tag: string) => void;
 }
 
 export default function LinkCard({
@@ -24,29 +28,29 @@ export default function LinkCard({
   href: url,
   tags = [],
   description,
+  onTagClick,
 }: LinkCardProps) {
-  const [copied, setCopied] = useState(false)
-  const { enableDelete } = useDeleteStore()
-  const { deleteLink } = useLinkStore()
+  const [copied, setCopied] = useState(false);
+  const { enableDelete } = useDeleteStore();
+  const { deleteLink } = useLinkStore();
 
   const handleCopy = async () => {
-    if (!navigator?.clipboard) return
+    if (!navigator?.clipboard) return;
     try {
-      await navigator.clipboard.writeText(title)
+      await navigator.clipboard.writeText(title);
     } catch {}
-    setCopied(true)
-    window.setTimeout(() => setCopied(false), 1400)
-  }
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1400);
+  };
 
   const handleDelete = async () => {
     if (confirm("Are you sure you want to delete this link?")) {
-      await deleteLink(id)
+      await deleteLink(id);
     }
-  }
+  };
 
   return (
     <Card className="group relative flex flex-col w-full bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden">
-
       {/* Top accent bar */}
       <div className="h-[2px] w-full bg-gradient-to-r from-slate-300 via-slate-400 to-slate-300 group-hover:from-blue-400 group-hover:via-indigo-500 group-hover:to-blue-400 transition-all duration-300" />
 
@@ -98,13 +102,14 @@ export default function LinkCard({
         {tags.length > 0 ? (
           <div className="flex flex-wrap gap-1">
             {tags.map((tag) => (
-              <Badge
+              <button
                 key={tag}
-                variant="secondary"
-                className="text-[10px] font-medium px-1.5 py-0 bg-slate-100 text-slate-600 border-0 rounded hover:bg-slate-200 transition-colors cursor-default"
+                type="button"
+                onClick={() => onTagClick?.(tag)}
+                className="rounded-full border border-slate-200 bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-600 transition hover:bg-slate-200"
               >
                 {tag}
-              </Badge>
+              </button>
             ))}
           </div>
         ) : (
@@ -128,7 +133,7 @@ export default function LinkCard({
         </Link>
       </CardFooter>
     </Card>
-  )
+  );
 }
 // "use client"
 

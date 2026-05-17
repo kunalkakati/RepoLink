@@ -18,6 +18,7 @@ export const getAllLinks = async () => {
   }
 };
 
+// getting all tags for filter
 export const getAllTags = async () => {
   "use cache";
   try {
@@ -30,6 +31,17 @@ export const getAllTags = async () => {
   } catch (error) {
     console.log(error);
     throw new Error("Failed to fetch tags");
+  }
+};
+
+// get links by tag
+export const searchByTag = async (tag: string) => {
+  "use cache";
+  try {
+    return await db.select().from(links).where(eq(links.tag, tag));
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to search links by tag");
   }
 };
 
