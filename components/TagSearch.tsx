@@ -3,6 +3,24 @@
 import { useMemo, useState, type ReactNode } from "react";
 import type { Link } from "@/db/schema";
 
+const tagColorVariants = [
+  "bg-sky-100 text-sky-800",
+  "bg-emerald-100 text-emerald-800",
+  "bg-violet-100 text-violet-800",
+  "bg-fuchsia-100 text-fuchsia-800",
+  "bg-amber-100 text-amber-800",
+  "bg-rose-100 text-rose-800",
+  "bg-lime-100 text-lime-800",
+];
+
+const getTagVariant = (tag: string) => {
+  const index = Array.from(tag || "").reduce(
+    (acc, char) => acc + char.charCodeAt(0),
+    0,
+  );
+  return tagColorVariants[index % tagColorVariants.length];
+};
+
 interface TagSearchProps {
   links: Link[];
   children: (
@@ -51,7 +69,7 @@ export default function TagSearch({ links, children }: TagSearchProps) {
             <button
               type="button"
               onClick={() => setSelectedTag("")}
-              className={`rounded-full border px-3 py-1 text-sm transition ${selectedTag ? "border-slate-300 bg-white text-slate-600 hover:bg-slate-100" : "border-blue-500 bg-blue-500 text-white hover:bg-blue-600"}`}
+              className={`rounded-full px-3 py-1.5 text-sm font-semibold transition ${selectedTag ? "bg-white text-slate-700 hover:bg-slate-100" : "bg-slate-900 text-white hover:bg-slate-800"}`}
             >
               All
             </button>
@@ -60,7 +78,7 @@ export default function TagSearch({ links, children }: TagSearchProps) {
                 key={tag}
                 type="button"
                 onClick={() => setSelectedTag(tag)}
-                className={`rounded-full border px-3 py-1 text-sm transition ${selectedTag === tag ? "border-blue-500 bg-blue-500 text-white hover:bg-blue-600" : "border-slate-300 bg-white text-slate-600 hover:bg-slate-100"}`}
+                className={`rounded-full border border-slate-200 px-3 py-1.5 text-sm font-semibold transition shadow-sm ${selectedTag === tag ? `bg-slate-900 text-white shadow-blue-200/60 hover:bg-slate-800` : `${getTagVariant(tag)} hover:scale-[1.02] hover:shadow-sm`}`}
               >
                 {tag}
               </button>

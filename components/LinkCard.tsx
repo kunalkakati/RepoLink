@@ -13,6 +13,24 @@ import { ExternalLink, Copy, Trash2, Check } from "lucide-react";
 import { useDeleteStore } from "@/store/DeleteStore";
 import { useLinkStore } from "@/store/LinkStore";
 
+const tagColorVariants = [
+  "from-sky-100 via-sky-200 text-sky-800",
+  "from-emerald-100 via-emerald-200 text-emerald-800",
+  "from-violet-100 via-violet-200 text-violet-800",
+  "from-fuchsia-100 via-fuchsia-200 text-fuchsia-800",
+  "from-amber-100 via-amber-200 text-amber-800",
+  "from-rose-100 via-rose-200 text-rose-800",
+  "from-lime-100 via-lime-200 text-lime-800",
+];
+
+const getTagClasses = (tag: string) => {
+  const hash = Array.from(tag).reduce(
+    (total, char) => total + char.charCodeAt(0),
+    0,
+  );
+  return tagColorVariants[hash % tagColorVariants.length];
+};
+
 interface LinkCardProps {
   id: string;
   name: string;
@@ -93,13 +111,13 @@ export default function LinkCard({
 
         {/* Tags */}
         {tags.length > 0 ? (
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-2">
             {tags.map((tag) => (
               <button
                 key={tag}
                 type="button"
                 onClick={() => onTagClick?.(tag)}
-                className="rounded-full border border-slate-200 bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-600 transition hover:bg-slate-200"
+                className={`rounded-full bg-linear-to-r ${getTagClasses(tag)} px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] shadow-sm ring-1 ring-slate-200/70 transition-all duration-200 hover:scale-[1.03] hover:shadow-md`}
               >
                 {tag}
               </button>
@@ -186,7 +204,7 @@ export default function LinkCard({
 //       <CardHeader className="relative pb-3 flex-shrink-0">
 //         <div className="flex items-start justify-between gap-3">
 //           <div className="flex-1 min-w-0">
-//             <CardTitle className="text-lg font-bold tracking-tight break-words line-clamp-2 min-h-[2.5rem] leading-tight bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent group-hover:from-blue-700 group-hover:to-purple-600 transition-all duration-300">
+//             <CardTitle className="text-lg font-bold tracking-tight break-words line-clamp-2 min-h-[2.5rem] leading-tight bg-linear-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent group-hover:from-blue-700 group-hover:to-purple-600 transition-all duration-300">
 //               {title}
 //             </CardTitle>
 //           </div>
@@ -238,7 +256,7 @@ export default function LinkCard({
 //               <Badge
 //                 key={tag}
 //                 variant="secondary"
-//                 className="text-xs px-2.5 py-1 bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700 border border-slate-300/50 hover:from-blue-100 hover:to-blue-200 hover:text-blue-800 transition-all duration-200 shadow-sm"
+//                 className="text-xs px-2.5 py-1 bg-linear-to-r from-slate-100 to-slate-200 text-slate-700 border border-slate-300/50 hover:from-blue-100 hover:to-blue-200 hover:text-blue-800 transition-all duration-200 shadow-sm"
 //               >
 //                 {tag}
 //               </Badge>
@@ -255,13 +273,13 @@ export default function LinkCard({
 //           href={url}
 //           target="_blank"
 //           rel="noreferrer"
-//           className="group/btn inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-blue-700 to-purple-700 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-all duration-300 hover:from-blue-700 hover:via-blue-800 hover:to-purple-800 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98]"
+//           className="group/btn inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-linear-to-r from-blue-600 via-blue-700 to-purple-700 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-all duration-300 hover:from-blue-700 hover:via-blue-800 hover:to-purple-800 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98]"
 //         >
 //           <span className="relative z-10">Open Link</span>
 //           <ExternalLink className="h-4 w-4 relative z-10 group-hover/btn:translate-x-0.5 transition-transform duration-200" />
 
 //           {/* Button shine effect */}
-//           <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
+//           <div className="absolute inset-0 rounded-xl bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
 //         </Link>
 //       </CardFooter>
 
