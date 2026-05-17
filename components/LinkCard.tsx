@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
+import LinkPreview from "@/components/LinkPreview";
 import {
   Card,
   CardContent,
@@ -28,13 +29,6 @@ export default function LinkCard({
   onTagClick,
 }: LinkCardProps) {
   const [copied, setCopied] = useState(false);
-  const [preview, setPreview] = useState<{
-    title?: string;
-    description?: string;
-    domain?: string;
-  }>({});
-  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
-  const [previewError, setPreviewError] = useState<string | null>(null);
   const { enableDelete } = useDeleteStore();
   const { deleteLink } = useLinkStore();
 
@@ -53,44 +47,8 @@ export default function LinkCard({
     }
   };
 
-  useEffect(() => {
-    let cancelled = false;
-    const fetchPreview = async () => {
-      setIsPreviewLoading(true);
-      setPreviewError(null);
-
-      try {
-        const response = await fetch(
-          `/api/metadata?url=${encodeURIComponent(url)}`,
-        );
-        if (!response.ok) {
-          throw new Error("Failed to load metadata");
-        }
-
-        const data = await response.json();
-        if (cancelled) return;
-        setPreview({
-          title: data.title || undefined,
-          description: data.description || undefined,
-          domain: data.domain || undefined,
-        });
-      } catch {
-        if (!cancelled) {
-          setPreviewError("Preview unavailable");
-        }
-      } finally {
-        if (!cancelled) setIsPreviewLoading(false);
-      }
-    };
-
-    fetchPreview();
-    return () => {
-      cancelled = true;
-    };
-  }, [url]);
-
   return (
-    <Card className="group relative flex flex-col w-full bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden">
+    <Card className="group relative flex flex-col w-full bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-visible">
       {/* Top accent bar */}
       <div className="h-0.5 w-full bg-linear-to-r from-slate-300 via-slate-400 to-slate-300 group-hover:from-blue-400 group-hover:via-indigo-500 group-hover:to-blue-400 transition-all duration-300" />
 
@@ -131,30 +89,7 @@ export default function LinkCard({
 
       {/* Body */}
       <CardContent className="px-4 py-0 flex flex-col gap-2 flex-1">
-        {/* Link preview */}
-        {isPreviewLoading ? (
-          <p className="text-sm text-slate-500">Loading preview…</p>
-        ) : previewError ? (
-          <p className="text-sm text-slate-500">{previewError}</p>
-        ) : preview.title || preview.description ? (
-          <div className="rounded-2xl border border-slate-200/70 bg-slate-50 p-3">
-            {preview.title && (
-              <p className="text-sm font-semibold text-slate-800 line-clamp-1">
-                {preview.title}
-              </p>
-            )}
-            {preview.description && (
-              <p className="mt-1 text-sm text-slate-600 line-clamp-2">
-                {preview.description}
-              </p>
-            )}
-            {preview.domain && (
-              <p className="mt-2 text-[11px] uppercase tracking-[0.24em] text-slate-400">
-                {preview.domain}
-              </p>
-            )}
-          </div>
-        ) : null}
+        <LinkPreview url={url} title={title} />
 
         {/* Tags */}
         {tags.length > 0 ? (
