@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/card";
 import { LinkInsertType } from "@/db/schema";
 import { useLinkStore } from "@/store/LinkStore";
 import { normalizeTags } from "@/lib/utils";
-import { tagOptions } from "@/secret/TagOptions";
+import { tagOptions, findTagOption } from "@/options/TagOptions";
 
 // const predefinedTags = [
 //   "docs",
@@ -23,6 +23,27 @@ import { tagOptions } from "@/secret/TagOptions";
 //   "ui",
 // ];
 const predefinedTags = tagOptions;
+
+const palette = [
+  "#ef4444",
+  "#f97316",
+  "#f59e0b",
+  "#10b981",
+  "#06b6d4",
+  "#60a5fa",
+  "#7c3aed",
+  "#f43f5e",
+];
+
+const colorFor = (tag: string) => {
+  const found = findTagOption(tag);
+  if (found) return found.color;
+  // deterministic pick from palette based on hash
+  let h = 0;
+  for (let i = 0; i < tag.length; i++) h = (h << 5) - h + tag.charCodeAt(i);
+  const idx = Math.abs(h) % palette.length;
+  return palette[idx];
+};
 
 export default function App() {
   const { addLink } = useLinkStore();
@@ -164,16 +185,23 @@ export default function App() {
                 {tagDropdownOpen && (
                   <div className="absolute left-0 top-full z-20 mt-2 w-full overflow-visible rounded-3xl border border-slate-200 bg-white shadow-2xl shadow-slate-200/50">
                     <div className="max-h-56 overflow-y-auto p-2">
-                      {predefinedTags.map((tag) => {
+                      {predefinedTags.map((opt) => {
+                        const tag = opt.value;
                         const isSelected = selectedTags.includes(tag);
                         return (
                           <button
                             key={tag}
                             type="button"
                             onClick={() => toggleTag(tag)}
-                            className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-sm transition ${isSelected ? "bg-slate-900 text-white" : "text-slate-700 hover:bg-slate-100"}`}
+                            className={`flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3 text-left text-sm transition ${isSelected ? "bg-slate-900 text-white" : "text-slate-700 hover:bg-slate-100"}`}
                           >
-                            <span>{tag}</span>
+                            <span className="flex items-center gap-3">
+                              <span
+                                className="inline-block h-3 w-3 rounded-full"
+                                style={{ backgroundColor: opt.color }}
+                              />
+                              <span>{opt.label ?? opt.value}</span>
+                            </span>
                             {isSelected && (
                               <span className="text-xs uppercase tracking-[0.24em] text-slate-300">
                                 Selected
@@ -206,9 +234,13 @@ export default function App() {
                       key={tag}
                       type="button"
                       onClick={() => toggleTag(tag)}
-                      className="rounded-full border border-slate-300 bg-white px-3 py-1 text-sm text-slate-700 transition hover:bg-slate-100"
+                      className="flex items-center gap-2 rounded-full border border-slate-300 bg-white px-3 py-1 text-sm text-slate-700 transition hover:bg-slate-100"
                     >
-                      {tag}
+                      <span
+                        className="inline-block h-3 w-3 rounded-full"
+                        style={{ backgroundColor: colorFor(tag) }}
+                      />
+                      <span>{tag}</span>
                     </button>
                   ))}
                 </div>
