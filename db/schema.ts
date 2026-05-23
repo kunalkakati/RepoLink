@@ -30,6 +30,17 @@ export const User = pgTable("users", {
 export type User = typeof User.$inferSelect;
 export type NewUser = typeof User.$inferInsert;
 
+export const tags = pgTable("tags", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  value: varchar("value", { length: 255 }).notNull(),
+  label: varchar("label", { length: 255 }).notNull(),
+  color: varchar("color", { length: 100 }),
+});
+
+// TypeScript types for the new table
+export type Tag = typeof tags.$inferSelect;
+export type NewTag = typeof tags.$inferInsert;
+
 // TypeScript type for selecting and inserting data
 export type Link = Omit<typeof links.$inferSelect, "tag"> & {
   tag: string[];

@@ -1,11 +1,12 @@
 export type TagOption = {
+  id?: string;
   value: string;
   label?: string;
-  color: string;
+  color?: string;
 };
 
-// A small curated list of tag options with colors. Colors are used for tag chips.
-export const tagOptions: TagOption[] = [
+// Default fallback values used when the database has no tags yet.
+export const defaultTagOptions: TagOption[] = [
   { value: "javascript", label: "JavaScript", color: "#f7df1e" },
   { value: "typescript", label: "TypeScript", color: "#3178c6" },
   { value: "react", label: "React", color: "#61dafb" },
@@ -16,7 +17,7 @@ export const tagOptions: TagOption[] = [
   { value: "tutorial", label: "Tutorial", color: "#10b981" },
 ];
 
-export const findTagOption = (value: string) =>
-  tagOptions.find((t) => t.value.toLowerCase() === value.toLowerCase());
+export const findFallbackTagOption = (value: string) =>
+  defaultTagOptions.find((t) => t.value.toLowerCase() === value.toLowerCase());
 
-export const suggestionList = () => tagOptions.slice();
+export const suggestionList = () => defaultTagOptions.slice();

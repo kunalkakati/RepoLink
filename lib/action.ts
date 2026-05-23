@@ -1,8 +1,9 @@
 "use server";
 
 // db/queries.ts
+import "dotenv/config";
 import db from "@/db/db";
-import { links, User, NewUser } from "@/db/schema";
+import { links, User, NewUser, tags } from "@/db/schema";
 import { NewLink } from "@/db/schema";
 import { eq, desc, sql } from "drizzle-orm";
 import { normalizeTags } from "@/lib/utils";
@@ -26,7 +27,7 @@ export const getAllLinks = async () => {
   }
 };
 
-// getting all tags for filter
+// getting all tags for filter from link payloads
 export const getAllTags = async () => {
   "use cache";
   try {
@@ -39,6 +40,17 @@ export const getAllTags = async () => {
   } catch (error) {
     console.log(error);
     throw new Error("Failed to fetch tags");
+  }
+};
+
+// Fetch tag rows from the dedicated tags table.
+export const getAllTagRows = async () => {
+  "use cache";
+  try {
+    return await db.select().from(tags).orderBy(tags.value);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch tag options");
   }
 };
 
@@ -113,5 +125,16 @@ export async function loginUser(key: string) {
     return { error: "Invalid credentials" };
   }
   return isMatch;
+}
+
+export async function getAlltags() {
+  try {
+    const allTags = await db.select().from(tags);
+    console.log(allTags);
+    return allTags;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch tags");
+  }
 }
 // Proceed with session creation/JWT

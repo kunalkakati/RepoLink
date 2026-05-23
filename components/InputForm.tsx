@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/card";
 import { LinkInsertType } from "@/db/schema";
 import { useLinkStore } from "@/store/LinkStore";
 import { normalizeTags } from "@/lib/utils";
-import { tagOptions, findTagOption } from "@/options/TagOptions";
+import { defaultTagOptions, type TagOption } from "@/options/TagOptions";
 
 // const predefinedTags = [
 //   "docs",
@@ -22,7 +22,7 @@ import { tagOptions, findTagOption } from "@/options/TagOptions";
 //   "react",
 //   "ui",
 // ];
-const predefinedTags = tagOptions;
+const predefinedStaticTags = defaultTagOptions;
 
 const palette = [
   "#ef4444",
@@ -35,9 +35,11 @@ const palette = [
   "#f43f5e",
 ];
 
-const colorFor = (tag: string) => {
-  const found = findTagOption(tag);
-  if (found) return found.color;
+const colorFor = (tag: string, options: TagOption[]) => {
+  const found = options.find(
+    (t) => t.value.toLowerCase() === tag.toLowerCase(),
+  );
+  if (found?.color) return found.color;
   // deterministic pick from palette based on hash
   let h = 0;
   for (let i = 0; i < tag.length; i++) h = (h << 5) - h + tag.charCodeAt(i);
@@ -55,6 +57,8 @@ export default function App() {
   const [customTag, setCustomTag] = useState("");
   const [tagDropdownOpen, setTagDropdownOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [dbTagOptions, setDbTagOptions] = useState<TagOption[]>([]);
+  const [tagLoading, setTagLoading] = useState(true);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const toggleTag = (tag: string) => {
@@ -64,6 +68,15 @@ export default function App() {
         : [...prev, tag],
     );
   };
+
+  const findTagOption = (value: string) =>
+    dbTagOptions.find((t) => t.value.toLowerCase() === value.toLowerCase()) ||
+    defaultTagOptions.find(
+      (t) => t.value.toLowerCase() === value.toLowerCase(),
+    );
+
+  const optionsToShow =
+    dbTagOptions.length > 0 ? dbTagOptions : predefinedStaticTags;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -86,6 +99,34 @@ export default function App() {
 
     document.addEventListener("mousedown", handleOutsideClick);
     return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetch("/api/tags", { signal: controller.signal })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Failed to load tag options");
+        return res.json();
+      })
+      .then((data: TagOption[]) => {
+        if (Array.isArray(data)) {
+          setDbTagOptions(
+            data.map((tag) => ({
+              id: tag.id,
+              value: tag.value,
+              label: tag.label || tag.value,
+              color: tag.color || "",
+            })),
+          );
+        }
+      })
+      .catch((error) => {
+        console.error("Error loading tags:", error);
+      })
+      .finally(() => setTagLoading(false));
+
+    return () => controller.abort();
   }, []);
 
   const addCustomTag = () => {
@@ -185,7 +226,7 @@ export default function App() {
                 {tagDropdownOpen && (
                   <div className="absolute left-0 top-full z-20 mt-2 w-full overflow-visible rounded-3xl border border-slate-200 bg-white shadow-2xl shadow-slate-200/50">
                     <div className="max-h-56 overflow-y-auto p-2">
-                      {predefinedTags.map((opt) => {
+                      {optionsToShow.map((opt) => {
                         const tag = opt.value;
                         const isSelected = selectedTags.includes(tag);
                         return (
@@ -238,7 +279,9 @@ export default function App() {
                     >
                       <span
                         className="inline-block h-3 w-3 rounded-full"
-                        style={{ backgroundColor: colorFor(tag) }}
+                        style={{
+                          backgroundColor: colorFor(tag, optionsToShow),
+                        }}
                       />
                       <span>{tag}</span>
                     </button>
