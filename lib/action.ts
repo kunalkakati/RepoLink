@@ -9,18 +9,46 @@ import { eq, desc, sql } from "drizzle-orm";
 import { normalizeTags } from "@/lib/utils";
 import { hashPassword, comparePasswords } from "@/lib/auth-utils";
 
+const CACHE_TTL = {
+  links: 1000 * 60 * 2, // 2 minutes
+  tags: 1000 * 60 * 5, // 5 minutes
+};
+
+const serverCache: {
+  links: {
+    value: Awaited<ReturnType<typeof db.select>> | null;
+    expiresAt: number;
+  };
+  tagRows: {
+    value: Awaited<ReturnType<typeof db.select>> | null;
+    expiresAt: number;
+  };
+} = {
+  links: { value: null, expiresAt: 0 },
+  tagRows: { value: null, expiresAt: 0 },
+};
+
 // Get all links
 export const getAllLinks = async () => {
   "use cache";
+  const now = Date.now();
+  if (serverCache.links.value && now < serverCache.links.expiresAt) {
+    return serverCache.links.value as any;
+  }
   try {
     const allLinks = await db
       .select()
       .from(links)
       .orderBy(desc(links.createdAt));
-    return allLinks.map((link) => ({
+    const normalized = allLinks.map((link) => ({
       ...link,
       tag: normalizeTags(link.tag),
     }));
+    serverCache.links = {
+      value: normalized as any,
+      expiresAt: now + CACHE_TTL.links,
+    };
+    return normalized;
   } catch (error) {
     console.log(error);
     throw new Error("Failed to fetch links");
@@ -46,8 +74,18 @@ export const getAllTags = async () => {
 // Fetch tag rows from the dedicated tags table.
 export const getAllTagRows = async () => {
   "use cache";
+  const now = Date.now();
+  if (serverCache.tagRows.value && now < serverCache.tagRows.expiresAt) {
+    return serverCache.tagRows.value as any;
+  }
+
   try {
-    return await db.select().from(tags).orderBy(tags.value);
+    const tagRows = await db.select().from(tags).orderBy(tags.value);
+    serverCache.tagRows = {
+      value: tagRows as any,
+      expiresAt: now + CACHE_TTL.tags,
+    };
+    return tagRows;
   } catch (error) {
     console.log(error);
     throw new Error("Failed to fetch tag options");

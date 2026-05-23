@@ -13,16 +13,49 @@ interface LinkStore {
   deleteLink: (id: string) => Promise<void>;
 }
 
+const LINK_CACHE_KEY = "seedlink-links-cache";
+const LINK_CACHE_TTL = 1000 * 60 * 2; // 2 minutes
+
+const loadLinkCache = () => {
+  if (typeof window === "undefined") return null;
+  try {
+    const cached = window.localStorage.getItem(LINK_CACHE_KEY);
+    if (!cached) return null;
+    const parsed = JSON.parse(cached);
+    if (parsed?.expiresAt && parsed?.data && Date.now() < parsed.expiresAt) {
+      return parsed.data as Link[];
+    }
+  } catch {
+    // ignore invalid cache
+  }
+  return null;
+};
+
+const saveLinkCache = (links: Link[]) => {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(
+    LINK_CACHE_KEY,
+    JSON.stringify({ expiresAt: Date.now() + LINK_CACHE_TTL, data: links }),
+  );
+};
+
 export const useLinkStore = create<LinkStore>((set) => ({
   links: [],
   isLoading: false,
   error: null,
 
   fetchLinks: async () => {
+    const cachedLinks = loadLinkCache();
+    if (cachedLinks) {
+      set({ links: cachedLinks, isLoading: false, error: null });
+      return;
+    }
+
     set({ isLoading: true, error: null });
     try {
       const data = await getAllLinks();
       set({ links: data });
+      saveLinkCache(data);
     } catch (error) {
       set({ error: "Failed to fetch links" });
       console.log(error);
@@ -35,9 +68,13 @@ export const useLinkStore = create<LinkStore>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const [newLink] = await addLink(data);
-      set((state) => ({ links: [...state.links, newLink] }));
+      set((state) => {
+        const links = [...state.links, newLink];
+        saveLinkCache(links);
+        return { links };
+      });
     } catch (err) {
-        console.log(err);
+      console.log(err);
       set({ error: "Failed to add link" });
     } finally {
       set({ isLoading: false });
@@ -48,7 +85,11 @@ export const useLinkStore = create<LinkStore>((set) => ({
     set({ isLoading: true, error: null });
     try {
       await deleteLink(id);
-      set((state) => ({ links: state.links.filter(link => link.id !== id) }));
+      set((state) => {
+        const links = state.links.filter((link) => link.id !== id);
+        saveLinkCache(links);
+        return { links };
+      });
     } catch (err) {
       console.log(err);
       set({ error: "Failed to delete link" });

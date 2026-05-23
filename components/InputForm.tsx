@@ -48,6 +48,32 @@ export default function App() {
   const [tagLoading, setTagLoading] = useState(true);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
+  const loadCachedTagOptions = () => {
+    if (typeof window === "undefined") return null;
+    try {
+      const cached = window.localStorage.getItem("seedlink-tag-options");
+      if (!cached) return null;
+      const parsed = JSON.parse(cached);
+      if (parsed?.expiresAt && parsed?.data && Date.now() < parsed.expiresAt) {
+        return parsed.data as TagOption[];
+      }
+    } catch {
+      // ignore invalid cache
+    }
+    return null;
+  };
+
+  const saveTagOptionsCache = (tags: TagOption[]) => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(
+      "seedlink-tag-options",
+      JSON.stringify({
+        expiresAt: Date.now() + 1000 * 60 * 15,
+        data: tags,
+      }),
+    );
+  };
+
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) =>
       prev.includes(tag)
@@ -83,6 +109,11 @@ export default function App() {
 
   useEffect(() => {
     const controller = new AbortController();
+    const cachedTags = loadCachedTagOptions();
+    if (cachedTags) {
+      setDbTagOptions(cachedTags);
+      setTagLoading(false);
+    }
 
     fetch("/api/tags", { signal: controller.signal })
       .then(async (res) => {
@@ -91,14 +122,14 @@ export default function App() {
       })
       .then((data: TagOption[]) => {
         if (Array.isArray(data)) {
-          setDbTagOptions(
-            data.map((tag) => ({
-              id: tag.id,
-              value: tag.value,
-              label: tag.label || tag.value,
-              color: tag.color || "",
-            })),
-          );
+          const mapped = data.map((tag) => ({
+            id: tag.id,
+            value: tag.value,
+            label: tag.label || tag.value,
+            color: tag.color || "",
+          }));
+          setDbTagOptions(mapped);
+          saveTagOptionsCache(mapped);
         }
       })
       .catch((error) => {

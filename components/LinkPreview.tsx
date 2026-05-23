@@ -21,8 +21,37 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
 
+  const loadPreviewCache = (url: string) => {
+    if (typeof window === "undefined") return null;
+    try {
+      const cached = window.localStorage.getItem(`seedlink-preview-${url}`);
+      if (!cached) return null;
+      const parsed = JSON.parse(cached);
+      if (parsed?.expiresAt && parsed?.data && Date.now() < parsed.expiresAt) {
+        return parsed.data as PreviewData;
+      }
+    } catch {
+      // ignore invalid cache
+    }
+    return null;
+  };
+
+  const savePreviewCache = (url: string, data: PreviewData) => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(
+      `seedlink-preview-${url}`,
+      JSON.stringify({ expiresAt: Date.now() + 1000 * 60 * 30, data }),
+    );
+  };
+
   useEffect(() => {
     let cancelled = false;
+
+    const cachedPreview = loadPreviewCache(url);
+    if (cachedPreview) {
+      setPreview(cachedPreview);
+      return;
+    }
 
     const fetchPreview = async () => {
       setIsPreviewLoading(true);
@@ -39,13 +68,15 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
         const data = await response.json();
         if (cancelled) return;
 
-        setPreview({
+        const nextPreview = {
           title: data.title || undefined,
           description: data.description || undefined,
           domain: data.domain || undefined,
           canonical: data.canonical || undefined,
           metadata: data.metadata || {},
-        });
+        };
+        setPreview(nextPreview);
+        savePreviewCache(url, nextPreview);
       } catch {
         if (!cancelled) {
           setPreviewError("Preview unavailable");

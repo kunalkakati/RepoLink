@@ -1,5 +1,14 @@
 import { NextResponse } from "next/server";
 
+const METADATA_CACHE_TTL = 1000 * 60 * 30; // 30 minutes
+const metadataCache = new Map<
+  string,
+  {
+    createdAt: number;
+    data: { title: string; description: string; domain: string };
+  }
+>();
+
 const readTitle = (html: string) => {
   const match = html.match(/<title[^>]*>([^<]*)<\/title>/i);
   return match?.[1]?.trim() ?? "";
@@ -29,6 +38,11 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
   }
 
+  const cached = metadataCache.get(targetUrl);
+  if (cached && Date.now() - cached.createdAt < METADATA_CACHE_TTL) {
+    return NextResponse.json(cached.data, { status: 200 });
+  }
+
   try {
     const response = await fetch(targetUrl, {
       headers: {
@@ -51,8 +65,10 @@ export async function GET(req: Request) {
     const description =
       readMeta(html, "og:description") || readMeta(html, "description") || "";
     const domain = new URL(targetUrl).hostname.replace(/^www\./, "");
+    const data = { title, description, domain };
+    metadataCache.set(targetUrl, { createdAt: Date.now(), data });
 
-    return NextResponse.json({ title, description, domain });
+    return NextResponse.json(data);
   } catch (error) {
     console.error("Metadata fetch error:", error);
     return NextResponse.json(
