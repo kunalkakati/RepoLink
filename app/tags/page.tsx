@@ -7,17 +7,42 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import type { TagOption } from "@/options/TagOptions";
 
-const defaultForm = {
+type TagForm = {
+  value: string;
+  label: string;
+  color?: string;
+};
+
+const defaultForm: TagForm = {
   value: "",
   label: "",
-  color: "#2563EB",
+};
+
+const tagColorPalette = [
+  "#ef4444",
+  "#f97316",
+  "#f59e0b",
+  "#10b981",
+  "#06b6d4",
+  "#60a5fa",
+  "#7c3aed",
+  "#f43f5e",
+  "#8b5cf6",
+  "#14b8a6",
+];
+
+const getRandomColor = () => {
+  return tagColorPalette[Math.floor(Math.random() * tagColorPalette.length)];
 };
 
 export default function TagsPage() {
   const [tags, setTags] = useState<TagOption[]>([]);
-  const [form, setForm] = useState(defaultForm);
+  const [form, setForm] = useState<TagForm>(defaultForm);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editingData, setEditingData] = useState(defaultForm);
+  const [editingData, setEditingData] = useState<TagForm>({
+    ...defaultForm,
+    color: "#2563EB",
+  });
   const [statusMessage, setStatusMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -80,7 +105,10 @@ export default function TagsPage() {
       const response = await fetch("/api/tags", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          color: getRandomColor(),
+        }),
       });
 
       if (!response.ok) {
@@ -125,7 +153,10 @@ export default function TagsPage() {
       const response = await fetch(`/api/tags/${encodeURIComponent(id)}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editingData),
+        body: JSON.stringify({
+          value: editingData.value,
+          label: editingData.label,
+        }),
       });
       if (!response.ok) {
         const error = await response.json();
@@ -228,18 +259,6 @@ export default function TagsPage() {
                 placeholder="e.g. Productivity"
               />
             </div>
-            <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="tag-color">Color</Label>
-              <Input
-                id="tag-color"
-                type="color"
-                value={form.color}
-                onChange={(event) =>
-                  handleFormChange("color", event.target.value)
-                }
-                className="h-12 px-2 py-0"
-              />
-            </div>
           </div>
 
           <div className="flex items-center justify-end gap-3">
@@ -324,20 +343,16 @@ export default function TagsPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor={`color-${tag.id}`}>Color</Label>
-                      <Input
-                        id={`color-${tag.id}`}
-                        type="color"
-                        value={
-                          isEditing ? editingData.color : tag.color || "#2563EB"
-                        }
-                        disabled={!isEditing}
-                        onChange={(event) =>
-                          isEditing &&
-                          handleEditingChange("color", event.target.value)
-                        }
-                        className="h-12 px-2 py-0"
-                      />
+                      <Label>Color</Label>
+                      <div className="flex items-center gap-3">
+                        <span
+                          className="inline-block h-8 w-8 rounded-full border"
+                          style={{ backgroundColor: tag.color || "#2563EB" }}
+                        />
+                        <span className="text-sm text-slate-600">
+                          {tag.color || "#2563EB"}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
