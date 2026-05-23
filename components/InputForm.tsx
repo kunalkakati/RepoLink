@@ -9,20 +9,7 @@ import { Card } from "@/components/ui/card";
 import { LinkInsertType } from "@/db/schema";
 import { useLinkStore } from "@/store/LinkStore";
 import { normalizeTags } from "@/lib/utils";
-import { defaultTagOptions, type TagOption } from "@/options/TagOptions";
-
-// const predefinedTags = [
-//   "docs",
-//   "tool",
-//   "library",
-//   "platform",
-//   "tutorial",
-//   "resource",
-//   "design",
-//   "react",
-//   "ui",
-// ];
-const predefinedStaticTags = defaultTagOptions;
+import type { TagOption } from "@/options/TagOptions";
 
 const palette = [
   "#ef4444",
@@ -69,14 +56,7 @@ export default function App() {
     );
   };
 
-  const findTagOption = (value: string) =>
-    dbTagOptions.find((t) => t.value.toLowerCase() === value.toLowerCase()) ||
-    defaultTagOptions.find(
-      (t) => t.value.toLowerCase() === value.toLowerCase(),
-    );
-
-  const optionsToShow =
-    dbTagOptions.length > 0 ? dbTagOptions : predefinedStaticTags;
+  const optionsToShow = dbTagOptions;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
