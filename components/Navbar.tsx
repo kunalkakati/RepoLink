@@ -1,24 +1,25 @@
-'use client'
+"use client";
 
-import { Bookmark, HomeIcon, PlusIcon, Menu, X } from 'lucide-react'
-import Link from 'next/link'
-import { useState } from 'react'
-import { useDeleteStore } from '@/store/DeleteStore'
-import { Checkbox } from '@/components/ui/checkbox'
-import useAuthStore from '@/store/AuthStore'
-
+import { Bookmark, HomeIcon, PlusIcon, Menu, X } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { useDeleteStore } from "@/store/DeleteStore";
+import { Checkbox } from "@/components/ui/checkbox";
+import useAuthStore from "@/store/AuthStore";
 
 const Navbar = () => {
-  const { enableDelete, setEnableDelete } = useDeleteStore()
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const {isAuthenticated} = useAuthStore();
+  const { enableDelete, setEnableDelete } = useDeleteStore();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated } = useAuthStore();
 
-  
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-3 transition-opacity hover:opacity-80">
+        <Link
+          href="/"
+          className="flex items-center space-x-3 transition-opacity hover:opacity-80"
+        >
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-slate-900 to-slate-800 shadow-lg">
             <Bookmark className="h-4 w-4 text-white" />
           </div>
@@ -36,7 +37,10 @@ const Navbar = () => {
               onCheckedChange={(checked) => setEnableDelete(checked as boolean)}
               className="h-4 w-4"
             />
-            <label htmlFor="enable-delete" className="text-sm font-medium text-muted-foreground">
+            <label
+              htmlFor="enable-delete"
+              className="text-sm font-medium text-muted-foreground"
+            >
               Enable Delete
             </label>
           </div>
@@ -51,10 +55,17 @@ const Navbar = () => {
 
           <Link
             href="/form"
-            className={`flex items-center space-x-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-2 text-sm font-semibold text-white shadow-lg transition-all hover:from-blue-700 hover:to-blue-800 hover:shadow-xl ${isAuthenticated ? '' : 'hidden'}`}
+            className={`flex items-center space-x-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-2 text-sm font-semibold text-white shadow-lg transition-all hover:from-blue-700 hover:to-blue-800 hover:shadow-xl ${isAuthenticated ? "" : "hidden"}`}
           >
             <PlusIcon className="h-4 w-4" />
             <span>Add Link</span>
+          </Link>
+
+          <Link
+            href="/tags"
+            className={`flex items-center space-x-2 rounded-lg px-3 py-2 text-sm font-medium text-foreground transition-all hover:bg-muted hover:text-foreground ${isAuthenticated ? "" : "hidden"}`}
+          >
+            <span>Manage Tags</span>
           </Link>
         </nav>
 
@@ -80,10 +91,15 @@ const Navbar = () => {
               <Checkbox
                 id="enable-delete-mobile"
                 checked={enableDelete}
-                onCheckedChange={(checked) => setEnableDelete(checked as boolean)}
+                onCheckedChange={(checked) =>
+                  setEnableDelete(checked as boolean)
+                }
                 className="h-4 w-4"
               />
-              <label htmlFor="enable-delete-mobile" className="text-sm font-medium text-muted-foreground">
+              <label
+                htmlFor="enable-delete-mobile"
+                className="text-sm font-medium text-muted-foreground"
+              >
                 Enable Delete
               </label>
             </div>
@@ -105,11 +121,19 @@ const Navbar = () => {
               <PlusIcon className="h-5 w-5" />
               <span>Add Link</span>
             </Link>
+
+            <Link
+              href="/tags"
+              className="flex items-center space-x-3 rounded-lg px-3 py-3 text-sm font-semibold text-foreground transition-all hover:bg-muted"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <span>Manage Tags</span>
+            </Link>
           </div>
         </div>
       )}
     </header>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

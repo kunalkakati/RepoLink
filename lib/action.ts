@@ -132,6 +132,54 @@ export async function deleteLink(id: string) {
   }
 }
 
+export async function createTag(data: {
+  value: string;
+  label: string;
+  color?: string;
+}) {
+  try {
+    const [newTag] = await db.insert(tags).values(data).returning();
+    serverCache.tagRows.expiresAt = 0;
+    return newTag;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to create tag");
+  }
+}
+
+export async function updateTagById(
+  id: string,
+  data: {
+    value?: string;
+    label?: string;
+    color?: string;
+  },
+) {
+  try {
+    const [updatedTag] = await db
+      .update(tags)
+      .set(data)
+      .where(eq(tags.id, id))
+      .returning();
+    serverCache.tagRows.expiresAt = 0;
+    return updatedTag;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to update tag");
+  }
+}
+
+export async function deleteTagById(id: string) {
+  try {
+    const deleted = await db.delete(tags).where(eq(tags.id, id)).returning();
+    serverCache.tagRows.expiresAt = 0;
+    return deleted;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to delete tag");
+  }
+}
+
 export async function registerUser(password: string) {
   // 1. Hash the password
   const hashedPassword = await hashPassword(password);
