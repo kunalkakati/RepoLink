@@ -44,11 +44,16 @@ export default function App() {
   const [customTag, setCustomTag] = useState("");
   const [tagDropdownOpen, setTagDropdownOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [dbTagOptions, setDbTagOptions] = useState<TagOption[]>([]);
-  const [tagLoading, setTagLoading] = useState(true);
+  const cachedTagOptions = loadCachedTagOptions();
+  const [dbTagOptions, setDbTagOptions] = useState<TagOption[]>(
+    cachedTagOptions ?? [],
+  );
+  const [tagLoading, setTagLoading] = useState<boolean>(
+    cachedTagOptions ? false : true,
+  );
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
-  const loadCachedTagOptions = () => {
+  function loadCachedTagOptions() {
     if (typeof window === "undefined") return null;
     try {
       const cached = window.localStorage.getItem("seedlink-tag-options");
@@ -61,9 +66,9 @@ export default function App() {
       // ignore invalid cache
     }
     return null;
-  };
+  }
 
-  const saveTagOptionsCache = (tags: TagOption[]) => {
+  function saveTagOptionsCache(tags: TagOption[]) {
     if (typeof window === "undefined") return;
     window.localStorage.setItem(
       "seedlink-tag-options",
@@ -72,7 +77,7 @@ export default function App() {
         data: tags,
       }),
     );
-  };
+  }
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) =>
@@ -109,11 +114,6 @@ export default function App() {
 
   useEffect(() => {
     const controller = new AbortController();
-    const cachedTags = loadCachedTagOptions();
-    if (cachedTags) {
-      setDbTagOptions(cachedTags);
-      setTagLoading(false);
-    }
 
     fetch("/api/tags", { signal: controller.signal })
       .then(async (res) => {
