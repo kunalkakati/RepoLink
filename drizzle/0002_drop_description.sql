@@ -1,0 +1,6 @@
+BEGIN;
+
+ALTER TABLE links
+  DROP COLUMN IF EXISTS description;
+
+COMMIT;

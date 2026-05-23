@@ -9,6 +9,7 @@ import useAuthStore from "@/store/AuthStore";
 import AuthFrom from "./AuthFrom";
 import IntroPage from "./IntroPage";
 import { MainPageSkeleton } from "./Skeleton";
+import { normalizeTags } from "@/lib/utils";
 
 const Home = () => {
   const { isAuthenticated } = useAuthStore();
@@ -26,6 +27,17 @@ const Home = () => {
       {isAuthenticated ? (
         <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-10">
           <IntroPage />
+          <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-slate-900">
+                Saved Links
+              </h2>
+              <p className="text-sm text-slate-500">
+                Showing {links.length} {links.length === 1 ? "link" : "links"}{" "}
+                from the database.
+              </p>
+            </div>
+          </div>
           <TagSearch links={links}>
             {(filteredLinks, selectTag) =>
               filteredLinks.length === 0 ? (
@@ -38,7 +50,7 @@ const Home = () => {
                       id={link.id}
                       name={link.name}
                       href={link.href}
-                      tags={link.tag ? link.tag.split(",") : []}
+                      tags={normalizeTags(link.tag)}
                       onTagClick={selectTag}
                     />
                   ))}

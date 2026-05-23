@@ -4,14 +4,22 @@
 import db from "@/db/db";
 import { links, User, NewUser } from "@/db/schema";
 import { NewLink } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
+import { normalizeTags } from "@/lib/utils";
 import { hashPassword, comparePasswords } from "@/lib/auth-utils";
 
 // Get all links
 export const getAllLinks = async () => {
   "use cache";
   try {
-    return await db.select().from(links).orderBy(desc(links.createdAt));
+    const allLinks = await db
+      .select()
+      .from(links)
+      .orderBy(desc(links.createdAt));
+    return allLinks.map((link) => ({
+      ...link,
+      tag: normalizeTags(link.tag),
+    }));
   } catch (error) {
     console.log(error);
     throw new Error("Failed to fetch links");
@@ -25,7 +33,7 @@ export const getAllTags = async () => {
     const allLinks = await db.select().from(links);
     const tagsSet = new Set<string>();
     allLinks.forEach((link) => {
-      tagsSet.add(link.tag);
+      normalizeTags(link.tag).forEach((tag) => tagsSet.add(tag));
     });
     return Array.from(tagsSet);
   } catch (error) {
@@ -38,7 +46,10 @@ export const getAllTags = async () => {
 export const searchByTag = async (tag: string) => {
   "use cache";
   try {
-    return await db.select().from(links).where(eq(links.tag, tag));
+    return await db
+      .select()
+      .from(links)
+      .where(sql`tag @> ${JSON.stringify([tag])}::jsonb`);
   } catch (error) {
     console.log(error);
     throw new Error("Failed to search links by tag");
@@ -49,7 +60,12 @@ export const searchByTag = async (tag: string) => {
 export async function addLink(data: NewLink) {
   try {
     const [newLink] = await db.insert(links).values(data).returning();
-    return [newLink];
+    return [
+      {
+        ...newLink,
+        tag: normalizeTags(newLink.tag),
+      },
+    ];
   } catch (error) {
     console.log(error);
     throw new Error("Failed to add links");
