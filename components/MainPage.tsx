@@ -10,13 +10,15 @@ import AuthForm from "./AuthForm";
 import IntroPage from "./IntroPage";
 import { MainPageSkeleton } from "./Skeleton";
 import { normalizeTags } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+
+const ITEMS_PER_PAGE = 30;
 
 const Home = () => {
   const { isAuthenticated } = useAuthStore();
   const { links, fetchLinks, isLoading } = useLinkStore();
-  const [sortOrder, setSortOrder] = useState<"newest" | "oldest" | "az" | "za">(
-    "newest",
-  );
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest" | "az" | "za">("newest");
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     fetchLinks();
@@ -73,11 +75,10 @@ const Home = () => {
               <select
                 id="sortOrder"
                 value={sortOrder}
-                onChange={(event) =>
-                  setSortOrder(
-                    event.target.value as "newest" | "oldest" | "az" | "za",
-                  )
-                }
+                onChange={(event) => {
+                  setSortOrder(event.target.value as "newest" | "oldest" | "az" | "za");
+                  setCurrentPage(1);
+                }}
                 className="rounded-full border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-slate-500"
               >
                 <option value="newest">Newest to oldest</option>
@@ -87,25 +88,76 @@ const Home = () => {
               </select>
             </div>
           </div>
-          <TagSearch links={sortedLinks}>
-            {(filteredLinks, selectTag) =>
-              filteredLinks.length === 0 ? (
+          <TagSearch links={sortedLinks} onFilterChange={() => setCurrentPage(1)}>
+            {(filteredLinks, selectTag) => {
+              const totalPages = Math.ceil(filteredLinks.length / ITEMS_PER_PAGE);
+              const validPage = Math.max(1, Math.min(currentPage, totalPages > 0 ? totalPages : 1));
+              
+              const startIndex = (validPage - 1) * ITEMS_PER_PAGE;
+              const paginatedLinks = filteredLinks.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+              const paginationControls = totalPages > 1 && (
+                <div className="flex items-center justify-center gap-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setCurrentPage((p) => Math.max(1, p - 1));
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    disabled={validPage === 1}
+                  >
+                    Previous
+                  </Button>
+                  <span className="text-sm font-medium text-slate-600">
+                    Page {validPage} of {totalPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setCurrentPage((p) => Math.min(totalPages, p + 1));
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    disabled={validPage === totalPages}
+                  >
+                    Next
+                  </Button>
+                </div>
+              );
+
+              return filteredLinks.length === 0 ? (
                 <NoLink />
               ) : (
-                <section className="mt-10 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4">
-                  {filteredLinks.map((link) => (
-                    <LinkCard
-                      key={link.id}
-                      id={link.id}
-                      name={link.name}
-                      href={link.href}
-                      tags={normalizeTags(link.tag)}
-                      onTagClick={selectTag}
-                    />
-                  ))}
-                </section>
-              )
-            }
+                <>
+                  {totalPages > 1 && (
+                    <div className="mt-8 mb-4">
+                      {paginationControls}
+                    </div>
+                  )}
+
+                  <section className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4">
+                    {paginatedLinks.map((link) => (
+                      <LinkCard
+                        key={link.id}
+                        id={link.id}
+                        name={link.name}
+                        href={link.href}
+                        tags={normalizeTags(link.tag)}
+                        onTagClick={(tag) => {
+                          selectTag(tag);
+                          setCurrentPage(1);
+                        }}
+                      />
+                    ))}
+                  </section>
+                  
+                  {totalPages > 1 && (
+                    <div className="mt-12">
+                      {paginationControls}
+                    </div>
+                  )}
+                </>
+              );
+            }}
           </TagSearch>
         </main>
       ) : (
@@ -116,4 +168,5 @@ const Home = () => {
 };
 
 export default Home;
+
 

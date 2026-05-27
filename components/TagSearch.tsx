@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState, useEffect, type ReactNode } from "react";
 import type { Link } from "@/db/schema";
 import { normalizeTags } from "@/lib/utils";
 
@@ -24,16 +24,23 @@ const getTagVariant = (tag: string) => {
 
 interface TagSearchProps {
   links: Link[];
+  onFilterChange?: () => void;
   children: (
     filteredLinks: Link[],
     selectTag: (tag: string) => void,
   ) => ReactNode;
 }
 
-export default function TagSearch({ links, children }: TagSearchProps) {
+export default function TagSearch({ links, onFilterChange, children }: TagSearchProps) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [matchMode, setMatchMode] = useState<"any" | "all">("any");
   const [tagQuery, setTagQuery] = useState("");
+
+  useEffect(() => {
+    if (onFilterChange) {
+      onFilterChange();
+    }
+  }, [selectedTags, matchMode, tagQuery]); // Note: omitted onFilterChange from deps to avoid infinite loops if it's not memoized
 
   const allTags = useMemo(() => {
     const tagSet = new Set<string>();
