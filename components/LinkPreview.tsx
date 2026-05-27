@@ -139,7 +139,6 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
               alt={preview.title || "Link thumbnail"}
               fill
               className="object-cover"
-              unoptimized
               onError={() => setImageFailed(true)}
               sizes="100vw"
             />
@@ -207,7 +206,6 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
                     alt={preview.title || "Link thumbnail"}
                     fill
                     className="object-cover"
-                    unoptimized
                     onError={() => setImageFailed(true)}
                     sizes="100vw"
                   />
