@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 interface LinkPreviewProps {
@@ -12,6 +13,7 @@ type PreviewData = {
   description?: string;
   domain?: string;
   canonical?: string;
+  image?: string;
   metadata?: Record<string, string>;
 };
 
@@ -20,6 +22,7 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
 
   const loadPreviewCache = (url: string) => {
     if (typeof window === "undefined") return null;
@@ -49,7 +52,12 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
 
     const cachedPreview = loadPreviewCache(url);
     if (cachedPreview) {
-      setPreview(cachedPreview);
+      setTimeout(() => {
+        if (!cancelled) {
+          setPreview(cachedPreview);
+          setImageFailed(false);
+        }
+      }, 0);
       return;
     }
 
@@ -73,9 +81,11 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
           description: data.description || undefined,
           domain: data.domain || undefined,
           canonical: data.canonical || undefined,
+          image: data.image || undefined,
           metadata: data.metadata || {},
         };
         setPreview(nextPreview);
+        setImageFailed(false);
         savePreviewCache(url, nextPreview);
       } catch {
         if (!cancelled) {
@@ -94,11 +104,13 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
     };
   }, [url]);
 
+  const showImage = Boolean(preview.image && !imageFailed);
   const hasPreview =
     preview.title ||
     preview.description ||
     preview.domain ||
     preview.canonical ||
+    showImage ||
     Object.keys(preview.metadata ?? {}).length > 0;
 
   if (isPreviewLoading) {
@@ -120,6 +132,20 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
         onClick={() => setIsExpanded(true)}
         className="w-full rounded-2xl border border-slate-200/70 bg-slate-50 p-3 text-left transition hover:border-blue-300"
       >
+        {showImage && (
+          <div className="mb-3 overflow-hidden rounded-2xl bg-slate-100 relative h-32 w-full">
+            <Image
+              src={preview.image!}
+              alt={preview.title || "Link thumbnail"}
+              fill
+              className="object-cover"
+              unoptimized
+              onError={() => setImageFailed(true)}
+              sizes="100vw"
+            />
+          </div>
+        )}
+
         {preview.title ? (
           <p className="text-sm font-semibold text-slate-800 line-clamp-1">
             {preview.title}
@@ -174,6 +200,20 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
             </div>
 
             <div className="space-y-4 px-5 py-5">
+              {showImage && (
+                <div className="overflow-hidden rounded-3xl bg-slate-100 relative h-64 w-full">
+                  <Image
+                    src={preview.image!}
+                    alt={preview.title || "Link thumbnail"}
+                    fill
+                    className="object-cover"
+                    unoptimized
+                    onError={() => setImageFailed(true)}
+                    sizes="100vw"
+                  />
+                </div>
+              )}
+
               {preview.description && (
                 <p className="text-sm text-slate-600">{preview.description}</p>
               )}

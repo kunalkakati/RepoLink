@@ -5,13 +5,27 @@ const metadataCache = new Map<
   string,
   {
     createdAt: number;
-    data: { title: string; description: string; domain: string };
+    data: {
+      title: string;
+      description: string;
+      domain: string;
+      image?: string;
+    };
   }
 >();
 
 const readTitle = (html: string) => {
   const match = html.match(/<title[^>]*>([^<]*)<\/title>/i);
   return match?.[1]?.trim() ?? "";
+};
+
+const normalizeUrl = (value: string, baseUrl: string) => {
+  if (!value) return undefined;
+  try {
+    return new URL(value, baseUrl).toString();
+  } catch {
+    return undefined;
+  }
 };
 
 const readMeta = (html: string, name: string) => {
@@ -64,8 +78,12 @@ export async function GET(req: Request) {
     const title = readMeta(html, "og:title") || readTitle(html);
     const description =
       readMeta(html, "og:description") || readMeta(html, "description") || "";
+    const image = normalizeUrl(
+      readMeta(html, "og:image") || readMeta(html, "twitter:image"),
+      targetUrl,
+    );
     const domain = new URL(targetUrl).hostname.replace(/^www\./, "");
-    const data = { title, description, domain };
+    const data = { title, description, domain, image };
     metadataCache.set(targetUrl, { createdAt: Date.now(), data });
 
     return NextResponse.json(data);
