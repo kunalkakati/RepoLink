@@ -128,7 +128,27 @@ export async function deleteLink(id: string) {
     return await db.delete(links).where(eq(links.id, id)).returning();
   } catch (error) {
     console.log(error);
-    throw new Error("Failed to add links");
+    throw new Error("Failed to delete links");
+  }
+}
+
+// Update an existing link
+export async function updateLink(id: string, data: Partial<NewLink>) {
+  try {
+    const [updatedLink] = await db
+      .update(links)
+      .set(data)
+      .where(eq(links.id, id))
+      .returning();
+    return [
+      {
+        ...updatedLink,
+        tag: normalizeTags(updatedLink.tag),
+      },
+    ];
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to update link");
   }
 }
 

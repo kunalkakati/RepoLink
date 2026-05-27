@@ -41,7 +41,7 @@ const Navbar = () => {
               htmlFor="enable-delete"
               className="text-sm font-medium text-muted-foreground"
             >
-              Enable Delete
+              Enable Edit
             </label>
           </div>
 

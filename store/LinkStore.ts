@@ -1,7 +1,7 @@
 // store/linkStore.ts
 import { create } from "zustand";
-import { Link, LinkInsertType } from "@/db/schema";
-import { getAllLinks, addLink, deleteLink } from "@/lib/action";
+import { Link, LinkInsertType, NewLink } from "@/db/schema";
+import { getAllLinks, addLink, deleteLink, updateLink } from "@/lib/action";
 
 interface LinkStore {
   links: Link[];
@@ -11,6 +11,7 @@ interface LinkStore {
   fetchLinks: () => Promise<void>;
   addLink: (data: LinkInsertType) => Promise<void>;
   deleteLink: (id: string) => Promise<void>;
+  updateLink: (id: string, data: Partial<NewLink>) => Promise<void>;
 }
 
 const LINK_CACHE_KEY = "seedlink-links-cache";
@@ -93,6 +94,25 @@ export const useLinkStore = create<LinkStore>((set) => ({
     } catch (err) {
       console.log(err);
       set({ error: "Failed to delete link" });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  updateLink: async (id: string, data: Partial<NewLink>) => {
+    set({ isLoading: true, error: null });
+    try {
+      const [updatedLink] = await updateLink(id, data);
+      set((state) => {
+        const links = state.links.map((link) => 
+          link.id === id ? { ...link, ...updatedLink } : link
+        );
+        saveLinkCache(links);
+        return { links };
+      });
+    } catch (err) {
+      console.log(err);
+      set({ error: "Failed to update link" });
     } finally {
       set({ isLoading: false });
     }
