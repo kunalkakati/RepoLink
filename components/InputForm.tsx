@@ -10,6 +10,8 @@ import { LinkInsertType } from "@/db/schema";
 import { useLinkStore } from "@/store/LinkStore";
 import { normalizeTags } from "@/lib/utils";
 import type { TagOption } from "@/options/TagOptions";
+import { useTags } from "@/hooks/useTags";
+import { Bookmarklet } from "@/components/Bookmarklet";
 
 const palette = [
   "#ef4444",
@@ -34,7 +36,7 @@ const colorFor = (tag: string, options: TagOption[]) => {
   return palette[idx];
 };
 
-export default function App() {
+export default function InputForm() {
   const { addLink } = useLinkStore();
   const [formData, setFormData] = useState<Omit<LinkInsertType, "tag">>({
     name: "",
@@ -44,40 +46,9 @@ export default function App() {
   const [customTag, setCustomTag] = useState("");
   const [tagDropdownOpen, setTagDropdownOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const cachedTagOptions = loadCachedTagOptions();
-  const [dbTagOptions, setDbTagOptions] = useState<TagOption[]>(
-    cachedTagOptions ?? [],
-  );
-  const [tagLoading, setTagLoading] = useState<boolean>(
-    cachedTagOptions ? false : true,
-  );
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
-  function loadCachedTagOptions() {
-    if (typeof window === "undefined") return null;
-    try {
-      const cached = window.localStorage.getItem("seedlink-tag-options");
-      if (!cached) return null;
-      const parsed = JSON.parse(cached);
-      if (parsed?.expiresAt && parsed?.data && Date.now() < parsed.expiresAt) {
-        return parsed.data as TagOption[];
-      }
-    } catch {
-      // ignore invalid cache
-    }
-    return null;
-  }
-
-  function saveTagOptionsCache(tags: TagOption[]) {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem(
-      "seedlink-tag-options",
-      JSON.stringify({
-        expiresAt: Date.now() + 1000 * 60 * 15,
-        data: tags,
-      }),
-    );
-  }
+  const { dbTagOptions: optionsToShow } = useTags();
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) =>
@@ -86,8 +57,6 @@ export default function App() {
         : [...prev, tag],
     );
   };
-
-  const optionsToShow = dbTagOptions;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -128,34 +97,6 @@ export default function App() {
 
     document.addEventListener("mousedown", handleOutsideClick);
     return () => document.removeEventListener("mousedown", handleOutsideClick);
-  }, []);
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    fetch("/api/tags", { signal: controller.signal })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Failed to load tag options");
-        return res.json();
-      })
-      .then((data: TagOption[]) => {
-        if (Array.isArray(data)) {
-          const mapped = data.map((tag) => ({
-            id: tag.id,
-            value: tag.value,
-            label: tag.label || tag.value,
-            color: tag.color || "",
-          }));
-          setDbTagOptions(mapped);
-          saveTagOptionsCache(mapped);
-        }
-      })
-      .catch((error) => {
-        console.error("Error loading tags:", error);
-      })
-      .finally(() => setTagLoading(false));
-
-    return () => controller.abort();
   }, []);
 
   const addCustomTag = () => {
@@ -328,22 +269,7 @@ export default function App() {
           </form>
         </Card>
 
-        <div className="w-full max-w-lg text-center p-4">
-          <h3 className="text-lg font-semibold text-slate-800 mb-2">Quick Save Bookmarklet</h3>
-          <p className="text-sm text-slate-600 mb-4">
-            Drag the button below to your bookmarks bar. Click it on any page to quickly save the link.
-          </p>
-          <a
-            href={`javascript:(function(){window.open('${typeof window !== "undefined" ? window.location.origin : ""}/form?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title),'_blank');})();`}
-            className="inline-block px-4 py-2 bg-slate-900 text-white rounded-full text-sm font-medium hover:bg-slate-800 transition shadow-sm"
-            onClick={(e) => {
-              e.preventDefault();
-              alert("Drag this button to your bookmarks bar, don't click it!");
-            }}
-          >
-            + Save to Seedlink
-          </a>
-        </div>
+        <Bookmarklet />
       </div>
     </div>
   );

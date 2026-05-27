@@ -6,7 +6,7 @@ import { useLinkStore } from "@/store/LinkStore";
 import { useEffect, useMemo, useState } from "react";
 import NoLink from "./NoLink";
 import useAuthStore from "@/store/AuthStore";
-import AuthFrom from "./AuthFrom";
+import AuthForm from "./AuthForm";
 import IntroPage from "./IntroPage";
 import { MainPageSkeleton } from "./Skeleton";
 import { normalizeTags } from "@/lib/utils";
@@ -45,7 +45,7 @@ const Home = () => {
   }, [links, sortOrder]);
 
   if (isLoading) {
-    return <div>{isAuthenticated ? <MainPageSkeleton /> : <AuthFrom />}</div>;
+    return <div>{isAuthenticated ? <MainPageSkeleton /> : <AuthForm />}</div>;
   }
 
   return (
@@ -109,37 +109,11 @@ const Home = () => {
           </TagSearch>
         </main>
       ) : (
-        <AuthFrom />
+        <AuthForm />
       )}
     </div>
   );
 };
 
 export default Home;
-// temp data for development
-// const demoLinks = [
-//   {
-//     title: 'shadcn/ui documentation',
-//     url: 'https://ui.shadcn.com',
-//     description: 'A minimal UI toolkit built with Tailwind and Radix.',
-//     tags: ['UI', 'components', 'react'],
-//   },
-//   {
-//     title: 'Tailwind CSS',
-//     url: 'https://tailwindcss.com',
-//     description: 'Utility-first CSS for modern responsive design.',
-//     tags: ['CSS', 'design', 'utility'],
-//   },
-//   {
-//     title: 'Next.js Docs',
-//     url: 'https://nextjs.org',
-//     description: 'Production-ready React framework for hybrid rendering.',
-//     tags: ['React', 'SSR', 'static'],
-//   },
-//   {
-//     title: 'MDN Web Docs',
-//     url: 'https://developer.mozilla.org',
-//     description: 'Comprehensive documentation and learning resources.',
-//     tags: ['reference', 'web', 'learning'],
-//   },
-// ]
+

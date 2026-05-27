@@ -14,7 +14,7 @@ import {
 import { Eye, EyeOff, Lock, Shield } from "lucide-react";
 import useAuthStore from "@/store/AuthStore";
 
-const AuthFrom = () => {
+const AuthForm = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -120,4 +120,4 @@ const AuthFrom = () => {
   );
 };
 
-export default AuthFrom;
+export default AuthForm;
