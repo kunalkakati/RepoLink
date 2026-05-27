@@ -104,11 +104,14 @@ export default function App() {
       const urlParam = params.get("url");
       const titleParam = params.get("title");
       if (urlParam || titleParam) {
-        setFormData((prev) => ({
-          ...prev,
-          href: urlParam || prev.href,
-          name: titleParam || prev.name,
-        }));
+        const timeout = setTimeout(() => {
+          setFormData((prev) => ({
+            ...prev,
+            href: urlParam || prev.href,
+            name: titleParam || prev.name,
+          }));
+        }, 0);
+        return () => clearTimeout(timeout);
       }
     }
   }, []);
