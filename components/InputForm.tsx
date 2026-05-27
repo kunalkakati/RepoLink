@@ -99,6 +99,21 @@ export default function App() {
   };
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const urlParam = params.get("url");
+      const titleParam = params.get("title");
+      if (urlParam || titleParam) {
+        setFormData((prev) => ({
+          ...prev,
+          href: urlParam || prev.href,
+          name: titleParam || prev.name,
+        }));
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -172,8 +187,8 @@ export default function App() {
 
   return (
     <div>
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
-        <Card className="w-full max-w-lg rounded-[28px] p-6 sm:p-8">
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 font-sans">
+        <Card className="w-full max-w-lg rounded-[28px] p-6 sm:p-8 mb-8">
           <div className="flex flex-col space-y-1.5 pb-6">
             <h3 className="font-semibold leading-none tracking-tight text-xl flex flex-col gap-2 sm:flex-row sm:items-center">
               <Link2 className="w-5 h-5 text-slate-500" />
@@ -309,6 +324,23 @@ export default function App() {
             </div>
           </form>
         </Card>
+
+        <div className="w-full max-w-lg text-center p-4">
+          <h3 className="text-lg font-semibold text-slate-800 mb-2">Quick Save Bookmarklet</h3>
+          <p className="text-sm text-slate-600 mb-4">
+            Drag the button below to your bookmarks bar. Click it on any page to quickly save the link.
+          </p>
+          <a
+            href={`javascript:(function(){window.open('${typeof window !== "undefined" ? window.location.origin : ""}/form?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title),'_blank');})();`}
+            className="inline-block px-4 py-2 bg-slate-900 text-white rounded-full text-sm font-medium hover:bg-slate-800 transition shadow-sm"
+            onClick={(e) => {
+              e.preventDefault();
+              alert("Drag this button to your bookmarks bar, don't click it!");
+            }}
+          >
+            + Save to Seedlink
+          </a>
+        </div>
       </div>
     </div>
   );
