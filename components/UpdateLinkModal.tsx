@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useLinkStore } from "@/store/LinkStore";
 import { normalizeTags } from "@/lib/utils";
+import { useTags } from "@/hooks/useTags";
+import { TagInput } from "@/components/TagInput";
 
 interface UpdateLinkModalProps {
   isOpen: boolean;
@@ -25,11 +27,13 @@ export default function UpdateLinkModal({
   link,
 }: UpdateLinkModalProps) {
   const { updateLink } = useLinkStore();
+  const { dbTagOptions } = useTags();
+  
   const [formData, setFormData] = useState({
     name: link.name,
     href: link.href,
-    tags: link.tags.join(", "),
   });
+  const [selectedTags, setSelectedTags] = useState<string[]>(link.tags || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
@@ -47,7 +51,7 @@ export default function UpdateLinkModal({
       await updateLink(link.id, {
         name: formData.name,
         href: formData.href,
-        tag: normalizeTags(formData.tags),
+        tag: normalizeTags(selectedTags),
       });
       onClose();
     } catch (error) {
@@ -101,14 +105,11 @@ export default function UpdateLinkModal({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="tags">Tags (comma-separated)</Label>
-            <Input
-              id="tags"
-              name="tags"
-              placeholder="e.g., React, UI, Web"
-              value={formData.tags}
-              onChange={handleInputChange}
-              className="rounded-xl"
+            <Label htmlFor="tags">Tags</Label>
+            <TagInput
+              selectedTags={selectedTags}
+              onChange={setSelectedTags}
+              options={dbTagOptions}
             />
           </div>
 

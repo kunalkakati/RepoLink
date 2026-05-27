@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { ChevronDown, Link2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Link2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -9,32 +9,9 @@ import { Card } from "@/components/ui/card";
 import { LinkInsertType } from "@/db/schema";
 import { useLinkStore } from "@/store/LinkStore";
 import { normalizeTags } from "@/lib/utils";
-import type { TagOption } from "@/options/TagOptions";
 import { useTags } from "@/hooks/useTags";
 import { Bookmarklet } from "@/components/Bookmarklet";
-
-const palette = [
-  "#ef4444",
-  "#f97316",
-  "#f59e0b",
-  "#10b981",
-  "#06b6d4",
-  "#60a5fa",
-  "#7c3aed",
-  "#f43f5e",
-];
-
-const colorFor = (tag: string, options: TagOption[]) => {
-  const found = options.find(
-    (t) => t.value.toLowerCase() === tag.toLowerCase(),
-  );
-  if (found?.color) return found.color;
-  // deterministic pick from palette based on hash
-  let h = 0;
-  for (let i = 0; i < tag.length; i++) h = (h << 5) - h + tag.charCodeAt(i);
-  const idx = Math.abs(h) % palette.length;
-  return palette[idx];
-};
+import { TagInput } from "@/components/TagInput";
 
 export default function InputForm() {
   const { addLink } = useLinkStore();
@@ -43,28 +20,13 @@ export default function InputForm() {
     href: "",
   });
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [customTag, setCustomTag] = useState("");
-  const [tagDropdownOpen, setTagDropdownOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const { dbTagOptions: optionsToShow } = useTags();
-
-  const toggleTag = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag)
-        ? prev.filter((value) => value !== tag)
-        : [...prev, tag],
-    );
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleCustomTagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCustomTag(e.target.value);
   };
 
   useEffect(() => {
@@ -85,40 +47,12 @@ export default function InputForm() {
     }
   }, []);
 
-  useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setTagDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleOutsideClick);
-    return () => document.removeEventListener("mousedown", handleOutsideClick);
-  }, []);
-
-  const addCustomTag = () => {
-    const tagsToAdd = normalizeTags(customTag);
-    if (tagsToAdd.length === 0) return;
-    setSelectedTags((prev) => Array.from(new Set([...prev, ...tagsToAdd])));
-    setCustomTag("");
-  };
-
-  const handleCustomKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      addCustomTag();
-    }
-  };
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     addLink({
       ...formData,
-      tag: normalizeTags([...selectedTags, ...normalizeTags(customTag)]),
+      tag: normalizeTags(selectedTags),
     });
 
     setIsSubmitted(true);
@@ -126,7 +60,6 @@ export default function InputForm() {
 
     setFormData({ name: "", href: "" });
     setSelectedTags([]);
-    setCustomTag("");
   };
 
   return (
@@ -178,86 +111,11 @@ export default function InputForm() {
             {/* Tag Field */}
             <div className="space-y-2">
               <Label htmlFor="tag">Tags</Label>
-              <div className="relative" ref={dropdownRef}>
-                <button
-                  type="button"
-                  onClick={() => setTagDropdownOpen((prev) => !prev)}
-                  className="flex h-12 w-full items-center justify-between rounded-2xl border border-slate-300 bg-white px-4 py-3 text-left text-sm text-slate-900 shadow-sm transition hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200"
-                  aria-expanded={tagDropdownOpen}
-                >
-                  <span>
-                    {selectedTags.length > 0
-                      ? selectedTags.join(", ")
-                      : "Select tags"}
-                  </span>
-                  <ChevronDown className="h-4 w-4 text-slate-500" />
-                </button>
-
-                {tagDropdownOpen && (
-                  <div className="absolute left-0 top-full z-20 mt-2 w-full overflow-visible rounded-3xl border border-slate-200 bg-white shadow-2xl shadow-slate-200/50">
-                    <div className="max-h-56 overflow-y-auto p-2">
-                      {optionsToShow.map((opt) => {
-                        const tag = opt.value;
-                        const isSelected = selectedTags.includes(tag);
-                        return (
-                          <button
-                            key={tag}
-                            type="button"
-                            onClick={() => toggleTag(tag)}
-                            className={`flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3 text-left text-sm transition ${isSelected ? "bg-slate-900 text-white" : "text-slate-700 hover:bg-slate-100"}`}
-                          >
-                            <span className="flex items-center gap-3">
-                              <span
-                                className="inline-block h-3 w-3 rounded-full"
-                                style={{ backgroundColor: opt.color }}
-                              />
-                              <span>{opt.label ?? opt.value}</span>
-                            </span>
-                            {isSelected && (
-                              <span className="text-xs uppercase tracking-[0.24em] text-slate-300">
-                                Selected
-                              </span>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="flex gap-2">
-                <Input
-                  id="customTag"
-                  name="customTag"
-                  placeholder="Add a custom tag and press Enter"
-                  value={customTag}
-                  onChange={handleCustomTagChange}
-                  onKeyDown={handleCustomKeyDown}
-                />
-                <Button type="button" onClick={addCustomTag}>
-                  Add
-                </Button>
-              </div>
-              {selectedTags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {selectedTags.map((tag) => (
-                    <button
-                      key={tag}
-                      type="button"
-                      onClick={() => toggleTag(tag)}
-                      className="flex items-center gap-2 rounded-full border border-slate-300 bg-white px-3 py-1 text-sm text-slate-700 transition hover:bg-slate-100"
-                    >
-                      <span
-                        className="inline-block h-3 w-3 rounded-full"
-                        style={{
-                          backgroundColor: colorFor(tag, optionsToShow),
-                        }}
-                      />
-                      <span>{tag}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
+              <TagInput
+                selectedTags={selectedTags}
+                onChange={setSelectedTags}
+                options={optionsToShow}
+              />
             </div>
 
             {/* Submit Button */}
