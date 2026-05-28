@@ -1,6 +1,13 @@
+"use client";
+
 import React from "react";
 
 export function Bookmarklet() {
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const bookmarkletHref = origin
+    ? `javascript:(function(){window.open('${origin}/form?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title),'_blank');})();`
+    : "#";
+
   return (
     <div className="w-full max-w-lg text-center p-4">
       <h3 className="text-lg font-semibold text-slate-800 mb-2">
@@ -11,9 +18,8 @@ export function Bookmarklet() {
         quickly save the link.
       </p>
       <a
-        href={`javascript:(function(){window.open('${
-          typeof window !== "undefined" ? window.location.origin : ""
-        }/form?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title),'_blank');})();`}
+        suppressHydrationWarning
+        href={bookmarkletHref}
         className="inline-block px-4 py-2 bg-slate-900 text-white rounded-full text-sm font-medium hover:bg-slate-800 transition shadow-sm"
         onClick={(e) => {
           e.preventDefault();
