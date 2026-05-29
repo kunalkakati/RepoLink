@@ -175,30 +175,20 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
           onClick={() => setIsExpanded(false)}
         >
           <div
-            className="relative w-full max-w-3xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl"
+            className="relative w-full max-w-3xl flex flex-col max-h-[90vh] overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="flex items-start justify-between gap-3 border-b border-slate-200 px-5 py-4">
-              <div className="min-w-0">
-                <p className="text-lg font-semibold text-slate-900">
-                  {preview.title || title}
-                </p>
-                {preview.domain && (
-                  <p className="mt-1 text-sm text-slate-500">
-                    {preview.domain}
-                  </p>
-                )}
-              </div>
+            <div className="flex flex-shrink-0 items-center justify-end border-b border-slate-200 px-5 py-3">
               <button
                 type="button"
                 onClick={() => setIsExpanded(false)}
-                className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
+                className="flex-shrink-0 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
               >
                 Close
               </button>
             </div>
 
-            <div className="space-y-4 px-5 py-5">
+            <div className="space-y-4 px-5 py-5 overflow-y-auto flex-1">
               {showImage && (
                 <div className="overflow-hidden rounded-3xl bg-slate-100 relative h-64 w-full">
                   <Image
@@ -211,6 +201,17 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
                   />
                 </div>
               )}
+
+              <div className="min-w-0">
+                <p className="text-xl font-semibold text-slate-900 break-words">
+                  {preview.title || title}
+                </p>
+                {preview.domain && (
+                  <p className="mt-1 text-sm text-slate-500">
+                    {preview.domain}
+                  </p>
+                )}
+              </div>
 
               {preview.description && (
                 <p className="text-sm text-slate-600">{preview.description}</p>
