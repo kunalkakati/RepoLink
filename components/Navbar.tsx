@@ -1,11 +1,12 @@
 "use client";
 
-import { Bookmark, HomeIcon, PlusIcon, Menu, X } from "lucide-react";
+import { Bookmark, HomeIcon, PlusIcon, Menu, X, Settings } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useDeleteStore } from "@/store/DeleteStore";
 import { Checkbox } from "@/components/ui/checkbox";
 import useAuthStore from "@/store/AuthStore";
+import { ThemeToggle } from "./ThemeToggle";
 
 const Navbar = () => {
   const { enableDelete, setEnableDelete } = useDeleteStore();
@@ -67,20 +68,32 @@ const Navbar = () => {
           >
             <span>Manage Tags</span>
           </Link>
+
+          <Link
+            href="/settings"
+            className="flex items-center space-x-2 rounded-lg px-3 py-2 text-sm font-medium text-foreground transition-all hover:bg-muted hover:text-foreground"
+          >
+            <Settings className="h-4 w-4" />
+            <span>Settings</span>
+          </Link>
+          <ThemeToggle />
         </nav>
 
-        {/* Mobile Menu Button */}
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="flex h-9 w-9 items-center justify-center rounded-lg border border-border/50 bg-muted/50 transition-all hover:bg-muted md:hidden"
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-        >
-          {isMenuOpen ? (
-            <X className="h-5 w-5 text-foreground" />
-          ) : (
-            <Menu className="h-5 w-5 text-foreground" />
-          )}
-        </button>
+        <div className="flex items-center space-x-2 md:hidden">
+          <ThemeToggle />
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-border/50 bg-muted/50 transition-all hover:bg-muted"
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {isMenuOpen ? (
+              <X className="h-5 w-5 text-foreground" />
+            ) : (
+              <Menu className="h-5 w-5 text-foreground" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Navigation Menu */}
@@ -115,7 +128,7 @@ const Navbar = () => {
 
             <Link
               href="/form"
-              className="flex items-center space-x-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-3 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:from-blue-700 hover:to-blue-800"
+              className={`flex items-center space-x-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-3 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:from-blue-700 hover:to-blue-800 ${isAuthenticated ? "" : "hidden"}`}
               onClick={() => setIsMenuOpen(false)}
             >
               <PlusIcon className="h-5 w-5" />
@@ -124,10 +137,19 @@ const Navbar = () => {
 
             <Link
               href="/tags"
-              className="flex items-center space-x-3 rounded-lg px-3 py-3 text-sm font-semibold text-foreground transition-all hover:bg-muted"
+              className={`flex items-center space-x-3 rounded-lg px-3 py-3 text-sm font-semibold text-foreground transition-all hover:bg-muted ${isAuthenticated ? "" : "hidden"}`}
               onClick={() => setIsMenuOpen(false)}
             >
               <span>Manage Tags</span>
+            </Link>
+
+            <Link
+              href="/settings"
+              className="flex items-center space-x-3 rounded-lg px-3 py-3 text-sm font-semibold text-foreground transition-all hover:bg-muted"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <Settings className="h-5 w-5" />
+              <span>Settings</span>
             </Link>
           </div>
         </div>

@@ -137,7 +137,7 @@ export default function LinkCard({
               ))}
             </div>
           ) : (
-            <p className="text-[11px] text-slate-400 italic">No tags</p>
+            <p className="text-[11px] text-muted-foreground italic">No tags</p>
           )}
         </CardContent>
 

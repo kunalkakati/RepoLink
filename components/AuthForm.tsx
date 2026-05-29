@@ -37,17 +37,17 @@ const AuthForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md mx-auto overflow-hidden shadow-2xl shadow-slate-200/50 border border-slate-200/80 bg-white/95 backdrop-blur-sm">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <Card className="w-full max-w-md mx-auto overflow-hidden shadow-2xl border bg-card/95 backdrop-blur-sm">
         <CardHeader className="space-y-4 text-center pb-4 pt-6 px-4 sm:px-6">
           <div className="mx-auto w-16 h-16 bg-linear-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200/30">
             <Shield className="w-8 h-8 text-white" />
           </div>
           <div className="space-y-2">
-            <CardTitle className="text-2xl font-bold text-slate-900">
+            <CardTitle className="text-2xl font-bold text-card-foreground">
               Access Required
             </CardTitle>
-            <CardDescription className="text-slate-600">
+            <CardDescription className="text-muted-foreground">
               Enter the password to access your link vault
             </CardDescription>
           </div>
@@ -58,7 +58,7 @@ const AuthForm = () => {
             <div className="space-y-3">
               <Label
                 htmlFor="password"
-                className="text-sm font-medium text-slate-700 flex items-center gap-2"
+                className="text-sm font-medium text-foreground flex items-center gap-2"
               >
                 <Lock className="w-4 h-4" />
                 Password
@@ -70,14 +70,14 @@ const AuthForm = () => {
                   value={password}
                   onChange={handleChange}
                   placeholder="Enter your password"
-                  className="pr-12 h-12 text-base border-slate-200 focus:border-blue-500 focus:ring-blue-500/20"
+                  className="pr-12 h-12 text-base border-border bg-background text-foreground focus:border-primary focus:ring-primary/20"
                   disabled={isLoading}
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   disabled={isLoading}
                 >
                   {showPassword ? (
@@ -97,12 +97,12 @@ const AuthForm = () => {
 
             <Button
               type="submit"
-              className="w-full h-12 bg-linear-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+              className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
               disabled={isLoading || !password.trim()}
             >
               {isLoading ? (
                 <div className="flex items-center justify-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin"></div>
                   Verifying...
                 </div>
               ) : (
@@ -111,7 +111,7 @@ const AuthForm = () => {
             </Button>
           </form>
 
-          <div className="rounded-2xl bg-slate-50 px-4 py-3 text-center text-xs text-slate-500 border border-slate-200">
+          <div className="rounded-2xl bg-muted px-4 py-3 text-center text-xs text-muted-foreground border border-border">
             Secure access to your personal link collection
           </div>
         </CardContent>

@@ -108,7 +108,7 @@ const Home = () => {
                   >
                     Previous
                   </Button>
-                  <span className="text-sm font-medium text-slate-600">
+                  <span className="text-sm font-medium text-muted-foreground">
                     Page {validPage} of {totalPages}
                   </span>
                   <Button
@@ -168,5 +168,7 @@ const Home = () => {
 };
 
 export default Home;
+
+
 
 

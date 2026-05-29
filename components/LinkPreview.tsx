@@ -182,7 +182,7 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
               <button
                 type="button"
                 onClick={() => setIsExpanded(false)}
-                className="flex-shrink-0 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
+                className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
               >
                 Close
               </button>
