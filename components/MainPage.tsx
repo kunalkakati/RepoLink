@@ -5,6 +5,7 @@ import TagSearch from "./TagSearch";
 import type { Link as LinkType } from "@/db/schema";
 import { useLinkStore } from "@/store/LinkStore";
 import { useEffect, useMemo, useState } from "react";
+import { Search, X as XIcon } from "lucide-react";
 import NoLink from "./NoLink";
 import useAuthStore from "@/store/AuthStore";
 import AuthForm from "./AuthForm";
@@ -59,39 +60,78 @@ const Home = () => {
       {isAuthenticated ? (
         <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-10">
           <IntroPage />
-          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-slate-900">
-                Saved Links
-              </h2>
-              <p className="text-sm text-slate-500">
-                Showing {links.length} {links.length === 1 ? "link" : "links"}{" "}
-                from the database.
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <label
-                htmlFor="sortOrder"
-                className="text-sm font-medium text-slate-700"
-              >
-                Sort by:
-              </label>
-              <select
-                id="sortOrder"
-                value={sortOrder}
-                onChange={(event) => {
-                  setSortOrder(
-                    event.target.value as "newest" | "oldest" | "az" | "za",
-                  );
-                  setCurrentPage(1);
-                }}
-                className="rounded-full border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-slate-500"
-              >
-                <option value="newest">Newest to oldest</option>
-                <option value="oldest">Oldest to newest</option>
-                <option value="az">Name A → Z</option>
-                <option value="za">Name Z → A</option>
-              </select>
+          <div className="mb-6 mt-5">
+            <div className="rounded-2xl bg-white/60 backdrop-blur-md border border-slate-200 p-6 shadow-md">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                    Saved Links
+                  </h1>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Showing {links.length}{" "}
+                    {links.length === 1 ? "link" : "links"} from the database.
+                  </p>
+                </div>
+
+                <div className="flex w-full max-w-2xl items-center gap-3 md:w-auto">
+                  <div className="relative flex-1 md:flex-none">
+                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                      <Search size={16} />
+                    </span>
+                    <input
+                      aria-label="Search links by name"
+                      value={nameQuery}
+                      onChange={(e) => {
+                        setNameQuery(e.target.value);
+                        setCurrentPage(1);
+                      }}
+                      placeholder="Search by name"
+                      className="w-full rounded-full border border-slate-200 bg-white/90 px-10 py-2 text-sm text-slate-700 outline-none transition focus:border-slate-400"
+                    />
+                    {nameQuery && (
+                      <button
+                        aria-label="Clear name search"
+                        onClick={() => {
+                          setNameQuery("");
+                          setCurrentPage(1);
+                        }}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-600 hover:bg-slate-100"
+                      >
+                        <XIcon size={14} />
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="hidden md:flex items-center gap-3">
+                    <label
+                      htmlFor="sortOrder"
+                      className="text-sm font-medium text-slate-700"
+                    >
+                      Sort
+                    </label>
+                    <select
+                      id="sortOrder"
+                      value={sortOrder}
+                      onChange={(event) => {
+                        setSortOrder(
+                          event.target.value as
+                            | "newest"
+                            | "oldest"
+                            | "az"
+                            | "za",
+                        );
+                        setCurrentPage(1);
+                      }}
+                      className="rounded-full border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-slate-500"
+                    >
+                      <option value="newest">Newest</option>
+                      <option value="oldest">Oldest</option>
+                      <option value="az">Name A → Z</option>
+                      <option value="za">Name Z → A</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <TagSearch
@@ -151,17 +191,7 @@ const Home = () => {
                     <div className="mt-8 mb-4">{paginationControls}</div>
                   )}
 
-                  <div className="mb-6">
-                    <input
-                      value={nameQuery}
-                      onChange={(e) => {
-                        setNameQuery(e.target.value);
-                        setCurrentPage(1);
-                      }}
-                      placeholder="Search by name"
-                      className="w-full max-w-md rounded-full border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-slate-500"
-                    />
-                  </div>
+                  {/* name search is now in the header */}
 
                   <section className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4">
                     {paginatedLinks.map((link: LinkType) => (
