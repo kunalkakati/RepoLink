@@ -73,7 +73,7 @@ const Home = () => {
                   </p>
                 </div>
 
-                <div className="flex w-full max-w-2xl items-center gap-3 md:w-auto">
+                <div className="flex flex-col gap-3 w-full md:flex-row md:items-center md:gap-3 md:w-auto">
                   <div className="relative flex-1 md:flex-none">
                     <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
                       <Search size={16} />
@@ -102,7 +102,7 @@ const Home = () => {
                     )}
                   </div>
 
-                  <div className="hidden md:flex items-center gap-3">
+                  <div className="flex flex-col gap-2 w-full md:flex-row md:items-center md:w-auto">
                     <label
                       htmlFor="sortOrder"
                       className="text-sm font-medium text-slate-700"
@@ -122,7 +122,7 @@ const Home = () => {
                         );
                         setCurrentPage(1);
                       }}
-                      className="rounded-full border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-slate-500"
+                      className="w-full rounded-full border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-slate-500 md:w-auto"
                     >
                       <option value="newest">Newest</option>
                       <option value="oldest">Oldest</option>
@@ -193,7 +193,7 @@ const Home = () => {
 
                   {/* name search is now in the header */}
 
-                  <section className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4">
+                  <section className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     {paginatedLinks.map((link: LinkType) => (
                       <LinkCard
                         key={link.id}

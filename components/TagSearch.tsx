@@ -127,15 +127,15 @@ export default function TagSearch({
               </button>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-2">
               <input
                 value={tagQuery}
                 onChange={(e) => setTagQuery(e.target.value)}
                 placeholder="Search tags"
-                className="rounded-full border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 outline-none transition focus:border-slate-500"
+                className="w-full min-w-0 rounded-full border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 outline-none transition focus:border-slate-500 sm:w-auto"
               />
 
-              <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600 shadow-sm">
+              <div className="flex flex-wrap items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600 shadow-sm">
                 <button
                   type="button"
                   onClick={() => setMatchMode("any")}
@@ -154,7 +154,7 @@ export default function TagSearch({
             </div>
           </div>
 
-          <div className="mt-4 flex flex-wrap items-center gap-2">
+          <div className="mt-4 flex flex-wrap gap-2 overflow-x-auto pb-1">
             {filteredTagOptions.length > 0 ? (
               filteredTagOptions.map((tag) => {
                 const isSelected = selectedTags.includes(tag);
