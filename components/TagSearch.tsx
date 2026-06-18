@@ -25,13 +25,21 @@ const getTagVariant = (tag: string) => {
 interface TagSearchProps {
   links: Link[];
   onFilterChange?: () => void;
+  nameQuery?: string;
+  onNameQueryChange?: (v: string) => void;
   children: (
     filteredLinks: Link[],
     selectTag: (tag: string) => void,
   ) => ReactNode;
 }
 
-export default function TagSearch({ links, onFilterChange, children }: TagSearchProps) {
+export default function TagSearch({
+  links,
+  onFilterChange,
+  nameQuery = "",
+  onNameQueryChange,
+  children,
+}: TagSearchProps) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [matchMode, setMatchMode] = useState<"any" | "all">("any");
   const [tagQuery, setTagQuery] = useState("");
@@ -40,7 +48,7 @@ export default function TagSearch({ links, onFilterChange, children }: TagSearch
     if (onFilterChange) {
       onFilterChange();
     }
-  }, [selectedTags, matchMode, tagQuery]); // Note: omitted onFilterChange from deps to avoid infinite loops if it's not memoized
+  }, [selectedTags, matchMode, tagQuery, nameQuery]); // Note: omitted onFilterChange from deps to avoid infinite loops if it's not memoized
 
   const allTags = useMemo(() => {
     const tagSet = new Set<string>();
@@ -57,27 +65,41 @@ export default function TagSearch({ links, onFilterChange, children }: TagSearch
   }, [allTags, tagQuery]);
 
   const filteredLinks = useMemo(() => {
-    if (selectedTags.length === 0) {
-      return links;
-    }
+    // Start with all links
+    let results = links;
 
-    return links.filter((link) => {
-      if (!link.tag) return false;
-      const tags = normalizeTags(link.tag)
-        .map((tag) => tag.toLowerCase())
-        .filter(Boolean);
+    // Filter by selected tags if any
+    if (selectedTags.length > 0) {
+      results = results.filter((link) => {
+        if (!link.tag) return false;
+        const tags = normalizeTags(link.tag)
+          .map((tag) => tag.toLowerCase())
+          .filter(Boolean);
 
-      if (matchMode === "all") {
-        return selectedTags.every((selected) =>
+        if (matchMode === "all") {
+          return selectedTags.every((selected) =>
+            tags.includes(selected.toLowerCase()),
+          );
+        }
+
+        return selectedTags.some((selected) =>
           tags.includes(selected.toLowerCase()),
         );
-      }
+      });
+    }
 
-      return selectedTags.some((selected) =>
-        tags.includes(selected.toLowerCase()),
+    // Filter by name query if provided
+    const nq = nameQuery.trim().toLowerCase();
+    if (nq) {
+      results = results.filter((link) =>
+        String(link.name || "")
+          .toLowerCase()
+          .includes(nq),
       );
-    });
-  }, [links, selectedTags, matchMode]);
+    }
+
+    return results;
+  }, [links, selectedTags, matchMode, nameQuery]);
 
   const toggleSelectedTag = (tag: string) => {
     setSelectedTags((prev) =>
@@ -112,6 +134,7 @@ export default function TagSearch({ links, onFilterChange, children }: TagSearch
                 placeholder="Search tags"
                 className="rounded-full border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 outline-none transition focus:border-slate-500"
               />
+
               <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600 shadow-sm">
                 <button
                   type="button"

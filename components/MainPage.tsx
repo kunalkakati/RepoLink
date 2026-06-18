@@ -1,7 +1,8 @@
 "use client";
 
 import LinkCard from "@/components/LinkCard";
-import TagSearch from "@/components/TagSearch";
+import TagSearch from "./TagSearch";
+import type { Link as LinkType } from "@/db/schema";
 import { useLinkStore } from "@/store/LinkStore";
 import { useEffect, useMemo, useState } from "react";
 import NoLink from "./NoLink";
@@ -17,8 +18,11 @@ const ITEMS_PER_PAGE = 30;
 const Home = () => {
   const { isAuthenticated } = useAuthStore();
   const { links, fetchLinks, isLoading } = useLinkStore();
-  const [sortOrder, setSortOrder] = useState<"newest" | "oldest" | "az" | "za">("newest");
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest" | "az" | "za">(
+    "newest",
+  );
   const [currentPage, setCurrentPage] = useState(1);
+  const [nameQuery, setNameQuery] = useState("");
 
   useEffect(() => {
     fetchLinks();
@@ -76,7 +80,9 @@ const Home = () => {
                 id="sortOrder"
                 value={sortOrder}
                 onChange={(event) => {
-                  setSortOrder(event.target.value as "newest" | "oldest" | "az" | "za");
+                  setSortOrder(
+                    event.target.value as "newest" | "oldest" | "az" | "za",
+                  );
                   setCurrentPage(1);
                 }}
                 className="rounded-full border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-slate-500"
@@ -88,13 +94,26 @@ const Home = () => {
               </select>
             </div>
           </div>
-          <TagSearch links={sortedLinks} onFilterChange={() => setCurrentPage(1)}>
-            {(filteredLinks, selectTag) => {
-              const totalPages = Math.ceil(filteredLinks.length / ITEMS_PER_PAGE);
-              const validPage = Math.max(1, Math.min(currentPage, totalPages > 0 ? totalPages : 1));
-              
+          <TagSearch
+            links={sortedLinks}
+            onFilterChange={() => setCurrentPage(1)}
+            nameQuery={nameQuery}
+            onNameQueryChange={setNameQuery}
+          >
+            {(filteredLinks: LinkType[], selectTag: (tag: string) => void) => {
+              const totalPages = Math.ceil(
+                filteredLinks.length / ITEMS_PER_PAGE,
+              );
+              const validPage = Math.max(
+                1,
+                Math.min(currentPage, totalPages > 0 ? totalPages : 1),
+              );
+
               const startIndex = (validPage - 1) * ITEMS_PER_PAGE;
-              const paginatedLinks = filteredLinks.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+              const paginatedLinks = filteredLinks.slice(
+                startIndex,
+                startIndex + ITEMS_PER_PAGE,
+              );
 
               const paginationControls = totalPages > 1 && (
                 <div className="flex items-center justify-center gap-4">
@@ -102,7 +121,7 @@ const Home = () => {
                     variant="outline"
                     onClick={() => {
                       setCurrentPage((p) => Math.max(1, p - 1));
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
                     disabled={validPage === 1}
                   >
@@ -115,7 +134,7 @@ const Home = () => {
                     variant="outline"
                     onClick={() => {
                       setCurrentPage((p) => Math.min(totalPages, p + 1));
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
                     disabled={validPage === totalPages}
                   >
@@ -129,13 +148,23 @@ const Home = () => {
               ) : (
                 <>
                   {totalPages > 1 && (
-                    <div className="mt-8 mb-4">
-                      {paginationControls}
-                    </div>
+                    <div className="mt-8 mb-4">{paginationControls}</div>
                   )}
 
+                  <div className="mb-6">
+                    <input
+                      value={nameQuery}
+                      onChange={(e) => {
+                        setNameQuery(e.target.value);
+                        setCurrentPage(1);
+                      }}
+                      placeholder="Search by name"
+                      className="w-full max-w-md rounded-full border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-slate-500"
+                    />
+                  </div>
+
                   <section className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4">
-                    {paginatedLinks.map((link) => (
+                    {paginatedLinks.map((link: LinkType) => (
                       <LinkCard
                         key={link.id}
                         id={link.id}
@@ -149,11 +178,9 @@ const Home = () => {
                       />
                     ))}
                   </section>
-                  
+
                   {totalPages > 1 && (
-                    <div className="mt-12">
-                      {paginationControls}
-                    </div>
+                    <div className="mt-12">{paginationControls}</div>
                   )}
                 </>
               );
@@ -168,7 +195,3 @@ const Home = () => {
 };
 
 export default Home;
-
-
-
-
