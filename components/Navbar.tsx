@@ -4,7 +4,7 @@ import { Bookmark, HomeIcon, PlusIcon, Menu, X, Settings } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useDeleteStore } from "@/store/DeleteStore";
-import { Checkbox } from "@/components/ui/checkbox";
+import ToggleSwitch from "@/components/ToggleSwitch";
 import useAuthStore from "@/store/AuthStore";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -32,18 +32,12 @@ const Navbar = () => {
         {/* Desktop Navigation */}
         <nav className="hidden items-center space-x-1 md:flex">
           <div className="flex items-center space-x-2 rounded-lg border border-border/50 bg-muted/50 px-3 py-1.5">
-            <Checkbox
-              id="enable-delete"
+            <ToggleSwitch
               checked={enableDelete}
-              onCheckedChange={(checked) => setEnableDelete(checked as boolean)}
-              className="h-4 w-4"
+              onChange={(v) => setEnableDelete(v)}
+              label="Enable Edit"
+              ariaLabel="Toggle enable edit"
             />
-            <label
-              htmlFor="enable-delete"
-              className="text-sm font-medium text-muted-foreground"
-            >
-              Enable Edit
-            </label>
           </div>
 
           <Link
@@ -101,20 +95,12 @@ const Navbar = () => {
         <div className="border-t border-border/40 bg-background/95 backdrop-blur-xl md:hidden">
           <div className="container mx-auto max-w-7xl space-y-1 px-4 py-4 sm:px-6">
             <div className="flex items-center space-x-3 rounded-lg border border-border/50 bg-muted/50 px-3 py-3">
-              <Checkbox
-                id="enable-delete-mobile"
+              <ToggleSwitch
                 checked={enableDelete}
-                onCheckedChange={(checked) =>
-                  setEnableDelete(checked as boolean)
-                }
-                className="h-4 w-4"
+                onChange={(v) => setEnableDelete(v)}
+                label="Enable Edit"
+                ariaLabel="Toggle enable edit mobile"
               />
-              <label
-                htmlFor="enable-delete-mobile"
-                className="text-sm font-medium text-muted-foreground"
-              >
-                Enable Delete
-              </label>
             </div>
 
             <Link
