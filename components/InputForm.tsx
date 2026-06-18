@@ -14,12 +14,13 @@ import { Bookmarklet } from "@/components/Bookmarklet";
 import { TagInput } from "@/components/TagInput";
 
 export default function InputForm() {
-  const { addLink } = useLinkStore();
+  const { addLink, links } = useLinkStore();
   const [formData, setFormData] = useState<Omit<LinkInsertType, "tag">>({
     name: "",
     href: "",
   });
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const { dbTagOptions: optionsToShow } = useTags();
@@ -27,6 +28,9 @@ export default function InputForm() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (formError) {
+      setFormError(null);
+    }
   };
 
   useEffect(() => {
@@ -47,19 +51,36 @@ export default function InputForm() {
     }
   }, []);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const trimmedName = formData.name.trim();
 
-    addLink({
-      ...formData,
-      tag: normalizeTags(selectedTags),
-    });
+    if (
+      links.some(
+        (link) => link.name.trim().toLowerCase() === trimmedName.toLowerCase(),
+      )
+    ) {
+      setFormError("A link with that name already exists.");
+      return;
+    }
 
-    setIsSubmitted(true);
-    setTimeout(() => setIsSubmitted(false), 3000);
+    try {
+      await addLink({
+        ...formData,
+        tag: normalizeTags(selectedTags),
+      });
 
-    setFormData({ name: "", href: "" });
-    setSelectedTags([]);
+      setFormError(null);
+      setIsSubmitted(true);
+      setTimeout(() => setIsSubmitted(false), 3000);
+
+      setFormData({ name: "", href: "" });
+      setSelectedTags([]);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to save link";
+      setFormError(message);
+    }
   };
 
   return (
@@ -90,6 +111,9 @@ export default function InputForm() {
                 value={formData.name}
                 onChange={handleInputChange}
               />
+              {formError ? (
+                <p className="text-sm text-red-600">{formError}</p>
+              ) : null}
             </div>
 
             {/* Href / Link Field */}

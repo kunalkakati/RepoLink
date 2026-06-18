@@ -107,8 +107,21 @@ export const searchByTag = async (tag: string) => {
 };
 
 // Add a new link
+const isLinkNameTaken = async (name: string, excludeId?: string) => {
+  const whereClause = excludeId
+    ? sql`lower(${links.name}) = lower(${name}) AND ${links.id} != ${excludeId}`
+    : sql`lower(${links.name}) = lower(${name})`;
+
+  const existing = await db.select().from(links).where(whereClause).limit(1);
+  return existing.length > 0;
+};
+
 export async function addLink(data: NewLink) {
   try {
+    if (await isLinkNameTaken(data.name)) {
+      throw new Error("A link with that name already exists.");
+    }
+
     const [newLink] = await db.insert(links).values(data).returning();
     return [
       {
@@ -118,6 +131,9 @@ export async function addLink(data: NewLink) {
     ];
   } catch (error) {
     console.log(error);
+    if (error instanceof Error && error.message.includes("already exists")) {
+      throw error;
+    }
     throw new Error("Failed to add links");
   }
 }
@@ -135,6 +151,10 @@ export async function deleteLink(id: string) {
 // Update an existing link
 export async function updateLink(id: string, data: Partial<NewLink>) {
   try {
+    if (data.name && (await isLinkNameTaken(data.name, id))) {
+      throw new Error("A link with that name already exists.");
+    }
+
     const [updatedLink] = await db
       .update(links)
       .set(data)
@@ -148,6 +168,9 @@ export async function updateLink(id: string, data: Partial<NewLink>) {
     ];
   } catch (error) {
     console.log(error);
+    if (error instanceof Error && error.message.includes("already exists")) {
+      throw error;
+    }
     throw new Error("Failed to update link");
   }
 }

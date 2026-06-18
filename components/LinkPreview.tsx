@@ -178,7 +178,7 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
             className="relative w-full max-w-3xl flex flex-col max-h-[90vh] overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="flex flex-shrink-0 items-center justify-end border-b border-slate-200 px-5 py-3">
+            <div className="flex shrink-0 items-center justify-end border-b border-slate-200 px-5 py-3">
               <button
                 type="button"
                 onClick={() => setIsExpanded(false)}
@@ -203,7 +203,7 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
               )}
 
               <div className="min-w-0">
-                <p className="text-xl font-semibold text-slate-900 break-words">
+                <p className="text-xl font-semibold text-slate-900 wrap-break-word">
                   {preview.title || title}
                 </p>
                 {preview.domain && (

@@ -26,14 +26,15 @@ export default function UpdateLinkModal({
   onClose,
   link,
 }: UpdateLinkModalProps) {
-  const { updateLink } = useLinkStore();
+  const { updateLink, links } = useLinkStore();
   const { dbTagOptions } = useTags();
-  
+
   const [formData, setFormData] = useState({
     name: link.name,
     href: link.href,
   });
   const [selectedTags, setSelectedTags] = useState<string[]>(link.tags || []);
+  const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
@@ -41,12 +42,28 @@ export default function UpdateLinkModal({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (formError) {
+      setFormError(null);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
+    const trimmedName = formData.name.trim();
+    const isDuplicate = links.some(
+      (existingLink) =>
+        existingLink.id !== link.id &&
+        existingLink.name.trim().toLowerCase() === trimmedName.toLowerCase(),
+    );
+
+    if (isDuplicate) {
+      setFormError("A link with that name already exists.");
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       await updateLink(link.id, {
         name: formData.name,
@@ -55,6 +72,9 @@ export default function UpdateLinkModal({
       });
       onClose();
     } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to update link";
+      setFormError(message);
       console.error("Failed to update link", error);
     } finally {
       setIsSubmitting(false);
@@ -63,7 +83,7 @@ export default function UpdateLinkModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-      <div 
+      <div
         className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
@@ -80,7 +100,9 @@ export default function UpdateLinkModal({
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Name <span className="text-red-500">*</span></Label>
+            <Label htmlFor="name">
+              Name <span className="text-red-500">*</span>
+            </Label>
             <Input
               id="name"
               name="name"
@@ -89,10 +111,15 @@ export default function UpdateLinkModal({
               onChange={handleInputChange}
               className="rounded-xl"
             />
+            {formError ? (
+              <p className="text-sm text-red-600">{formError}</p>
+            ) : null}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="href">Link (URL) <span className="text-red-500">*</span></Label>
+            <Label htmlFor="href">
+              Link (URL) <span className="text-red-500">*</span>
+            </Label>
             <Input
               id="href"
               name="href"
@@ -123,8 +150,8 @@ export default function UpdateLinkModal({
             >
               Cancel
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="rounded-xl bg-blue-600 hover:bg-blue-700"
               disabled={isSubmitting}
             >

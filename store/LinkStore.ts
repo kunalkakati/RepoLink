@@ -76,7 +76,9 @@ export const useLinkStore = create<LinkStore>((set) => ({
       });
     } catch (err) {
       console.log(err);
-      set({ error: "Failed to add link" });
+      const message = err instanceof Error ? err.message : "Failed to add link";
+      set({ error: message });
+      throw err;
     } finally {
       set({ isLoading: false });
     }
@@ -104,15 +106,18 @@ export const useLinkStore = create<LinkStore>((set) => ({
     try {
       const [updatedLink] = await updateLink(id, data);
       set((state) => {
-        const links = state.links.map((link) => 
-          link.id === id ? { ...link, ...updatedLink } : link
+        const links = state.links.map((link) =>
+          link.id === id ? { ...link, ...updatedLink } : link,
         );
         saveLinkCache(links);
         return { links };
       });
     } catch (err) {
       console.log(err);
-      set({ error: "Failed to update link" });
+      const message =
+        err instanceof Error ? err.message : "Failed to update link";
+      set({ error: message });
+      throw err;
     } finally {
       set({ isLoading: false });
     }
