@@ -9,10 +9,14 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { ExternalLink, Copy, Trash2, Check, Pencil } from "lucide-react";
+import { ExternalLink, Play, Copy, Trash2, Check, Pencil } from "lucide-react";
 import { useDeleteStore } from "@/store/DeleteStore";
 import { useLinkStore } from "@/store/LinkStore";
 import UpdateLinkModal from "@/components/UpdateLinkModal";
+
+const previewBaseUrl =
+  process.env.NEXT_PUBLIC_SEARCH_URL?.replace(/\/+$/, "") ||
+  "https://javtrailers.com/search";
 
 const tagColorVariants = [
   "from-sky-100 via-sky-200 text-sky-800",
@@ -143,18 +147,29 @@ export default function LinkCard({
 
         {/* Footer */}
         <CardFooter className="px-4 pt-3 pb-4">
-          <Link
-            href={url}
-            target="_blank"
-            rel="noreferrer"
-            className="group/btn relative inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-linear-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-700 hover:via-blue-800 hover:to-indigo-800 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
-          >
-            <span className="relative z-10">Open Link</span>
-            <ExternalLink className="h-4 w-4 relative z-10 group-hover/btn:translate-x-0.5 transition-transform duration-200" />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Link
+              href={url}
+              target="_blank"
+              rel="noreferrer"
+              className="group/btn relative inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-linear-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-700 hover:via-blue-800 hover:to-indigo-800 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
+            >
+              <span className="relative z-10">Open Link</span>
+              <ExternalLink className="h-4 w-4 relative z-10 group-hover/btn:translate-x-0.5 transition-transform duration-200" />
+              <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
+            </Link>
 
-            {/* Button shine effect */}
-            <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
-          </Link>
+            <Link
+              href={`${previewBaseUrl}/${encodeURIComponent(title)}`}
+              target="_blank"
+              rel="noreferrer"
+              className="group/btn relative inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 text-white hover:bg-slate-800 px-3 py-2 text-xs font-semibold shadow-sm shadow-slate-400/15 transition-all duration-300 hover:shadow-md hover:scale-[1.01] active:scale-[0.99] overflow-hidden"
+            >
+              <span className="relative z-10">Trailer</span>
+              <Play className="h-3.5 w-3.5 relative z-10 group-hover/btn:translate-x-0.5 transition-transform duration-200" />
+              <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
+            </Link>
+          </div>
         </CardFooter>
       </Card>
 
