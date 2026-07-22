@@ -54,17 +54,22 @@ export function TagInput({
     width: number;
   } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+
       if (
         containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
+        !containerRef.current.contains(target) &&
+        !(dropdownRef.current && dropdownRef.current.contains(target))
       ) {
         setIsOpen(false);
       }
     };
+
     document.addEventListener("mousedown", handleOutsideClick);
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
@@ -133,7 +138,7 @@ export function TagInput({
   }, [isOpen]);
 
   return (
-    <div className="relative z-[60]" ref={containerRef}>
+    <div className="relative z-60" ref={containerRef}>
       <div
         className={`flex min-h-12 w-full flex-wrap items-center gap-2 rounded-2xl border bg-slate-900/90 px-3 py-2 text-sm text-slate-100 transition-colors cursor-text ${isOpen ? "border-slate-500 ring-4 ring-slate-700/40" : "border-white/10 hover:border-slate-500"}`}
         onClick={() => {
@@ -196,13 +201,14 @@ export function TagInput({
         typeof document !== "undefined" &&
         createPortal(
           <div
+            ref={dropdownRef}
             style={{
               position: "fixed",
               left: dropdownRect.left,
               top: dropdownRect.top,
               width: dropdownRect.width,
             }}
-            className="z-[70] mt-2 overflow-hidden rounded-2xl border border-white/10 bg-slate-900/95 shadow-[0_18px_45px_-15px_rgba(0,0,0,0.7)] backdrop-blur"
+            className="z-70 mt-2 overflow-hidden rounded-2xl border border-white/10 bg-slate-900/95 shadow-[0_18px_45px_-15px_rgba(0,0,0,0.7)] backdrop-blur"
           >
             <div className="max-h-60 overflow-y-auto p-1.5">
               {filteredOptions.length > 0 ? (

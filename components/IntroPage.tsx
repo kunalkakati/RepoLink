@@ -29,9 +29,9 @@ const IntroPage = () => {
             >
               <Plus className="h-4 w-4" /> Add new link
             </Link>
-            <p className="text-sm text-muted-foreground">
+            {/* <p className="text-sm text-muted-foreground">
               4 saved links · 2 collections
-            </p>
+            </p> */}
           </div>
         </div>
       </section>

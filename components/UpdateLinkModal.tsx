@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,13 @@ export default function UpdateLinkModal({
   const [selectedTags, setSelectedTags] = useState<string[]>(link.tags || []);
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setFormData({ name: link.name, href: link.href });
+    setSelectedTags(link.tags || []);
+    setFormError(null);
+  }, [isOpen, link]);
 
   if (!isOpen) return null;
 
@@ -81,10 +89,14 @@ export default function UpdateLinkModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+  if (typeof document === "undefined") {
+    return null;
+  }
+
+  return createPortal(
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
       <div
-        className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+        className="relative w-full max-w-md rounded-2xl bg-slate-950/95 shadow-[0_30px_90px_-40px_rgba(0,0,0,0.85)] overflow-hidden border border-white/10 animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
@@ -160,6 +172,7 @@ export default function UpdateLinkModal({
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
