@@ -1,4 +1,5 @@
-export const METADATA_PROXY_BASE_URL = "https://r.jina.ai/http://";
+export const METADATA_PROXY_BASE_URL =
+  process.env.METADATA_PROXY_BASE_URL || "https://r.jina.ai/http://";
 
 export const readTitle = (html: string) => {
   const match = html.match(/<title[^>]*>([^<]*)<\/title>/i);

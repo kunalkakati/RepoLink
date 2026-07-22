@@ -140,7 +140,7 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
               fill
               className="object-cover"
               onError={() => setImageFailed(true)}
-              sizes="100vw"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           </div>
         )}
@@ -197,7 +197,7 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
                     fill
                     className="object-cover"
                     onError={() => setImageFailed(true)}
-                    sizes="100vw"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 70vw"
                   />
                 </div>
               )}

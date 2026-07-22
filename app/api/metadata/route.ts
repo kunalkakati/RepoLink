@@ -18,29 +18,6 @@ const metadataCache = new Map<
   }
 >();
 
-const readTitle = (html: string) => {
-  const match = html.match(/<title[^>]*>([^<]*)<\/title>/i);
-  return match?.[1]?.trim() ?? "";
-};
-
-const normalizeUrl = (value: string, baseUrl: string) => {
-  if (!value) return undefined;
-  try {
-    return new URL(value, baseUrl).toString();
-  } catch {
-    return undefined;
-  }
-};
-
-const readMeta = (html: string, name: string) => {
-  const regex = new RegExp(
-    `<meta\\s+(?:name|property)=[\"']${name}[\"'][^>]*content=[\"']([^\"']+)[\"']`,
-    "i",
-  );
-  const match = html.match(regex);
-  return match?.[1]?.trim() ?? "";
-};
-
 export async function GET(req: Request) {
   const url = new URL(req.url).searchParams.get("url")?.trim();
 
