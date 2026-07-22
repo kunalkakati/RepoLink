@@ -1,4 +1,11 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  useLayoutEffect,
+} from "react";
+import { createPortal } from "react-dom";
 import { X, ChevronDown } from "lucide-react";
 import { normalizeTags } from "@/lib/utils";
 import type { TagOption } from "@/options/TagOptions";
@@ -41,6 +48,11 @@ export function TagInput({
 }: TagInputProps) {
   const [inputValue, setInputValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [dropdownRect, setDropdownRect] = useState<{
+    top: number;
+    left: number;
+    width: number;
+  } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -96,10 +108,34 @@ export function TagInput({
     );
   }, [options, inputValue]);
 
+  useLayoutEffect(() => {
+    if (!isOpen || !containerRef.current) return;
+
+    const updateDropdownRect = () => {
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (rect) {
+        setDropdownRect({
+          left: rect.left,
+          top: rect.bottom,
+          width: rect.width,
+        });
+      }
+    };
+
+    updateDropdownRect();
+    window.addEventListener("resize", updateDropdownRect);
+    window.addEventListener("scroll", updateDropdownRect, true);
+
+    return () => {
+      window.removeEventListener("resize", updateDropdownRect);
+      window.removeEventListener("scroll", updateDropdownRect, true);
+    };
+  }, [isOpen]);
+
   return (
-    <div className="relative" ref={containerRef}>
+    <div className="relative z-[60]" ref={containerRef}>
       <div
-        className={`flex min-h-12 w-full flex-wrap items-center gap-2 rounded-2xl border bg-white px-3 py-2 text-sm transition-colors cursor-text ${isOpen ? "border-slate-400 ring-4 ring-slate-100" : "border-slate-300 hover:border-slate-400"}`}
+        className={`flex min-h-12 w-full flex-wrap items-center gap-2 rounded-2xl border bg-slate-900/90 px-3 py-2 text-sm text-slate-100 transition-colors cursor-text ${isOpen ? "border-slate-500 ring-4 ring-slate-700/40" : "border-white/10 hover:border-slate-500"}`}
         onClick={() => {
           inputRef.current?.focus();
           setIsOpen(true);
@@ -108,7 +144,7 @@ export function TagInput({
         {selectedTags.map((tag) => (
           <span
             key={tag}
-            className="flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 pl-2 pr-1 py-1 text-xs font-medium text-slate-700"
+            className="flex items-center gap-1 rounded-full border border-white/10 bg-slate-800/80 pl-2 pr-1 py-1 text-xs font-medium text-slate-200"
           >
             <span
               className="inline-block h-2 w-2 rounded-full"
@@ -117,7 +153,7 @@ export function TagInput({
             {tag}
             <button
               type="button"
-              className="ml-0.5 rounded-full p-0.5 text-slate-400 hover:bg-slate-200 hover:text-slate-900 transition-colors focus:outline-none"
+              className="ml-0.5 rounded-full p-0.5 text-slate-400 hover:bg-slate-700 hover:text-slate-100 transition-colors focus:outline-none"
               onClick={(e) => {
                 e.stopPropagation();
                 removeTag(tag);
@@ -138,7 +174,7 @@ export function TagInput({
           onKeyDown={handleKeyDown}
           onFocus={() => setIsOpen(true)}
           placeholder={selectedTags.length === 0 ? placeholder : ""}
-          className="flex-1 bg-transparent outline-none min-w-30 py-1"
+          className="min-w-30 flex-1 bg-transparent py-1 outline-none text-slate-100 placeholder:text-slate-500"
         />
         <button
           type="button"
@@ -147,7 +183,7 @@ export function TagInput({
             setIsOpen(!isOpen);
             if (!isOpen) inputRef.current?.focus();
           }}
-          className="p-1 text-slate-400 hover:text-slate-600 focus:outline-none rounded-full hover:bg-slate-100 transition-colors ml-auto"
+          className="ml-auto rounded-full p-1 text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-200 focus:outline-none"
         >
           <ChevronDown
             className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
@@ -155,64 +191,76 @@ export function TagInput({
         </button>
       </div>
 
-      {isOpen && (
-        <div className="absolute left-0 top-full z-20 mt-2 w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-200/40">
-          <div className="max-h-60 overflow-y-auto p-1.5">
-            {filteredOptions.length > 0 ? (
-              filteredOptions.map((opt) => {
-                const tag = opt.value;
-                const isSelected = selectedTags.includes(tag);
-                return (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() => {
-                      if (isSelected) {
-                        removeTag(tag);
-                      } else {
-                        addTag(tag);
-                      }
-                      inputRef.current?.focus();
-                    }}
-                    className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-sm transition-colors ${
-                      isSelected
-                        ? "bg-slate-100 text-slate-900"
-                        : "text-slate-700 hover:bg-slate-50"
-                    }`}
-                  >
-                    <span className="flex items-center gap-2">
-                      <span
-                        className="inline-block h-2.5 w-2.5 rounded-full shadow-sm"
-                        style={{ backgroundColor: opt.color }}
-                      />
-                      <span>{opt.label ?? opt.value}</span>
-                    </span>
-                    {isSelected && (
-                      <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
-                        Selected
+      {isOpen &&
+        dropdownRect &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            style={{
+              position: "fixed",
+              left: dropdownRect.left,
+              top: dropdownRect.top,
+              width: dropdownRect.width,
+            }}
+            className="z-[70] mt-2 overflow-hidden rounded-2xl border border-white/10 bg-slate-900/95 shadow-[0_18px_45px_-15px_rgba(0,0,0,0.7)] backdrop-blur"
+          >
+            <div className="max-h-60 overflow-y-auto p-1.5">
+              {filteredOptions.length > 0 ? (
+                filteredOptions.map((opt) => {
+                  const tag = opt.value;
+                  const isSelected = selectedTags.includes(tag);
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => {
+                        if (isSelected) {
+                          removeTag(tag);
+                        } else {
+                          addTag(tag);
+                        }
+                        inputRef.current?.focus();
+                      }}
+                      className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-sm transition-colors ${
+                        isSelected
+                          ? "bg-slate-800 text-slate-100"
+                          : "text-slate-300 hover:bg-slate-800/70"
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <span
+                          className="inline-block h-2.5 w-2.5 rounded-full shadow-sm"
+                          style={{ backgroundColor: opt.color }}
+                        />
+                        <span>{opt.label ?? opt.value}</span>
                       </span>
-                    )}
-                  </button>
-                );
-              })
-            ) : (
-              <div className="px-3 py-4 text-center text-sm text-slate-500">
-                {inputValue ? (
-                  <>
-                    Press{" "}
-                    <kbd className="rounded border bg-slate-100 px-1.5 py-0.5 font-mono text-xs">
-                      Enter
-                    </kbd>{" "}
-                    to add <strong>&quot;{inputValue}&quot;</strong>
-                  </>
-                ) : (
-                  "No tags found"
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+                      {isSelected && (
+                        <span className="text-xs font-medium uppercase tracking-wider text-slate-400">
+                          Selected
+                        </span>
+                      )}
+                    </button>
+                  );
+                })
+              ) : (
+                <div className="px-3 py-4 text-center text-sm text-slate-400">
+                  {inputValue ? (
+                    <>
+                      Press{" "}
+                      <kbd className="rounded border border-white/10 bg-slate-800 px-1.5 py-0.5 font-mono text-xs text-slate-200">
+                        Enter
+                      </kbd>{" "}
+                      to add <strong>&quot;{inputValue}&quot;</strong>
+                    </>
+                  ) : (
+                    "No tags found"
+                  )}
+                </div>
+              )}
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

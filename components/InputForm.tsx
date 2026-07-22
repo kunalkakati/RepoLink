@@ -85,7 +85,7 @@ export default function InputForm() {
 
   return (
     <div>
-      <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.18),_transparent_55%)] bg-slate-950 flex flex-col items-center justify-center p-4 font-sans">
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.18),transparent_55%)] bg-slate-950 flex flex-col items-center justify-center p-4 font-sans">
         <Card className="mb-8 w-full max-w-lg rounded-[28px] border border-white/10 bg-slate-900/90 p-6 text-slate-100 shadow-2xl shadow-black/30 sm:p-8">
           <div className="flex flex-col space-y-1.5 pb-6">
             <h3 className="flex flex-col gap-2 text-xl font-semibold leading-none tracking-tight sm:flex-row sm:items-center">

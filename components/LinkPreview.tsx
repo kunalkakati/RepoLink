@@ -215,7 +215,7 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
         typeof document !== "undefined" &&
         createPortal(
           <div
-            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/55 px-3 py-4 backdrop-blur-sm sm:px-4"
+            className="fixed inset-0 z-9999 flex items-center justify-center bg-black/55 px-3 py-4 backdrop-blur-sm sm:px-4"
             onClick={() => setIsExpanded(false)}
           >
             <div

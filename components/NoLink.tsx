@@ -14,7 +14,7 @@ const NoLink = () => {
 
   return (
     <div className="my-4 rounded-[28px] border border-white/10 bg-slate-900/70 p-4 shadow-[0_20px_60px_-24px_rgba(0,0,0,0.6)] backdrop-blur-xl">
-      <div className="flex min-h-[420px] flex-col items-center justify-center rounded-[24px] border border-dashed border-white/10 bg-gradient-to-br from-slate-950/70 via-slate-900/80 to-blue-950/50 px-6 py-10 text-center sm:px-10">
+      <div className="flex min-h-105 flex-col items-center justify-center rounded-[24px] border border-dashed border-white/10 bg-linear-to-br from-slate-950/70 via-slate-900/80 to-blue-950/50 px-6 py-10 text-center sm:px-10">
         <div className="relative mb-6 h-24 w-24">
           <div className="absolute inset-0 rounded-full bg-blue-500/10" />
           <div className="relative flex h-full w-full items-center justify-center rounded-full border border-dashed border-blue-400/20 bg-slate-900/70 shadow-sm">
