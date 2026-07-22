@@ -1,4 +1,8 @@
 import { NextResponse } from "next/server";
+import {
+  buildMetadataFetchUrls,
+  extractMetadataFromHtml,
+} from "@/lib/metadata";
 
 const METADATA_CACHE_TTL = 1000 * 60 * 30; // 30 minutes
 const metadataCache = new Map<
@@ -58,32 +62,38 @@ export async function GET(req: Request) {
   }
 
   try {
-    const response = await fetch(targetUrl, {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (compatible; Seedlink/1.0; +https://example.com)",
-        Accept:
-          "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-      },
-    });
+    let html = "";
+    let lastError: unknown;
 
-    if (!response.ok) {
-      return NextResponse.json(
-        { error: "Unable to fetch metadata" },
-        { status: 502 },
-      );
+    for (const candidateUrl of buildMetadataFetchUrls(targetUrl)) {
+      try {
+        const response = await fetch(candidateUrl, {
+          headers: {
+            "User-Agent":
+              "Mozilla/5.0 (compatible; Seedlink/1.0; +https://example.com)",
+            Accept:
+              "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Request failed with ${response.status}`);
+        }
+
+        html = await response.text();
+        if (html) {
+          break;
+        }
+      } catch (error) {
+        lastError = error;
+      }
     }
 
-    const html = await response.text();
-    const title = readMeta(html, "og:title") || readTitle(html);
-    const description =
-      readMeta(html, "og:description") || readMeta(html, "description") || "";
-    const image = normalizeUrl(
-      readMeta(html, "og:image") || readMeta(html, "twitter:image"),
-      targetUrl,
-    );
-    const domain = new URL(targetUrl).hostname.replace(/^www\./, "");
-    const data = { title, description, domain, image };
+    if (!html) {
+      throw lastError ?? new Error("No metadata HTML returned");
+    }
+
+    const data = extractMetadataFromHtml(html, targetUrl);
     metadataCache.set(targetUrl, { createdAt: Date.now(), data });
 
     return NextResponse.json(data);
