@@ -1,58 +1,52 @@
-import React from 'react';
-import { Plus, Link as LinkIcon, ExternalLink, MousePointerClick } from 'lucide-react';
-import { redirect } from 'next/navigation';
+import React from "react";
+import {
+  Plus,
+  Link as LinkIcon,
+  ExternalLink,
+  MousePointerClick,
+} from "lucide-react";
+import { redirect } from "next/navigation";
 
 const NoLink = () => {
-  // Mock function for the primary action
   const handleCreateFirstLink = () => {
-    //   console.log("Opening 'Create Link' modal or navigation...");
-    redirect('/form');
+    redirect("/form");
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 my-4 rounded-2xl">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-sm border border-slate-200 p-8 text-center transition-all hover:shadow-md">
-        
-        {/* Icon Illustration Container */}
-        <div className="relative w-24 h-24 mx-auto mb-6">
-          <div className="absolute inset-0 bg-indigo-100 rounded-full animate-pulse opacity-50"></div>
-          <div className="relative flex items-center justify-center w-full h-full bg-white rounded-full border-2 border-dashed border-indigo-200">
-            <LinkIcon className="w-10 h-10 text-indigo-500" />
-            
-            {/* Floating small icons for visual interest */}
-            <div className="absolute -top-1 -right-1 bg-white p-1.5 rounded-lg shadow-sm border border-slate-100 transform rotate-12">
-              <Plus className="w-4 h-4 text-indigo-600" />
+    <div className="my-4 rounded-[28px] border border-white/10 bg-slate-900/70 p-4 shadow-[0_20px_60px_-24px_rgba(0,0,0,0.6)] backdrop-blur-xl">
+      <div className="flex min-h-[420px] flex-col items-center justify-center rounded-[24px] border border-dashed border-white/10 bg-gradient-to-br from-slate-950/70 via-slate-900/80 to-blue-950/50 px-6 py-10 text-center sm:px-10">
+        <div className="relative mb-6 h-24 w-24">
+          <div className="absolute inset-0 rounded-full bg-blue-500/10" />
+          <div className="relative flex h-full w-full items-center justify-center rounded-full border border-dashed border-blue-400/20 bg-slate-900/70 shadow-sm">
+            <LinkIcon className="h-10 w-10 text-blue-400" />
+            <div className="absolute -right-1 -top-1 rounded-xl border border-white/10 bg-slate-900/70 p-1.5 shadow-sm">
+              <Plus className="h-4 w-4 text-blue-400" />
             </div>
-            <div className="absolute -bottom-1 -left-2 bg-white p-1.5 rounded-lg shadow-sm border border-slate-100 transform -rotate-12">
-              <ExternalLink className="w-4 h-4 text-slate-400" />
+            <div className="absolute -bottom-1 -left-2 rounded-xl border border-white/10 bg-slate-900/70 p-1.5 shadow-sm">
+              <ExternalLink className="h-4 w-4 text-slate-400" />
             </div>
           </div>
         </div>
 
-        {/* Text Content */}
-        <h3 className="text-xl font-bold text-slate-900 mb-2">
-          No links available yet
+        <h3 className="mb-2 text-xl font-bold text-slate-100">
+          Your library is ready for its first link
         </h3>
-        <p className="text-slate-500 mb-8 leading-relaxed">
-          It looks like you have not added any URLs to your collection. 
-          Start by creating your first link to organize your resources.
+        <p className="mb-8 max-w-md text-sm leading-7 text-slate-400">
+          Add your current favorite URLs here so everything stays organized,
+          searchable, and easy to revisit later.
         </p>
 
-        {/* Action Button */}
         <button
           onClick={handleCreateFirstLink}
-          className="group relative inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-indigo-200 active:scale-[0.98]"
+          className="group relative inline-flex w-full max-w-xs items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-blue-600 via-blue-700 to-indigo-700 px-6 py-3.5 font-semibold text-white shadow-lg shadow-blue-500/25 transition-all duration-200 hover:scale-[1.01] hover:shadow-xl active:scale-[0.98]"
         >
-          <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
-          <span>Create your First Link</span>
+          <Plus className="h-5 w-5 transition-transform duration-300 group-hover:rotate-90" />
+          <span>Create your first link</span>
         </button>
 
-        {/* Optional Secondary Tip */}
-        <div className="mt-8 pt-6 border-t border-slate-100">
-          <div className="flex items-center justify-center gap-2 text-xs font-medium text-slate-400 uppercase tracking-wider">
-            <MousePointerClick className="w-3.5 h-3.5" />
-            <span>Pro tip: Use shortcuts to add links faster</span>
-          </div>
+        <div className="mt-8 flex items-center justify-center gap-2 border-t border-slate-100 pt-6 text-xs font-medium uppercase tracking-[0.24em] text-slate-400">
+          <MousePointerClick className="h-3.5 w-3.5" />
+          <span>Fast setup, cleaner browsing</span>
         </div>
       </div>
     </div>

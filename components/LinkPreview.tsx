@@ -114,11 +114,21 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
     Object.keys(preview.metadata ?? {}).length > 0;
 
   if (isPreviewLoading) {
-    return <p className="text-sm text-slate-500">Loading preview…</p>;
+    return (
+      <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-3">
+        <div className="mb-3 h-24 animate-pulse rounded-2xl bg-slate-800" />
+        <div className="h-4 w-3/4 animate-pulse rounded-full bg-slate-800" />
+        <div className="mt-2 h-3 w-1/2 animate-pulse rounded-full bg-slate-800" />
+      </div>
+    );
   }
 
   if (previewError) {
-    return <p className="text-sm text-slate-500">{previewError}</p>;
+    return (
+      <div className="rounded-2xl border border-dashed border-white/10 bg-slate-900/70 p-3 text-sm text-slate-400">
+        {previewError}
+      </div>
+    );
   }
 
   if (!hasPreview) {
@@ -130,15 +140,15 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
       <button
         type="button"
         onClick={() => setIsExpanded(true)}
-        className="w-full rounded-2xl border border-slate-200/70 bg-slate-50 p-3 text-left transition hover:border-blue-300"
+        className="w-full rounded-2xl border border-white/10 bg-slate-900/70 p-3 text-left shadow-sm transition hover:border-blue-400/40 hover:bg-slate-800/90"
       >
         {showImage && (
-          <div className="mb-3 overflow-hidden rounded-2xl bg-slate-100 relative h-32 w-full">
+          <div className="relative mb-3 h-32 w-full overflow-hidden rounded-2xl bg-slate-100">
             <Image
               src={preview.image!}
               alt={preview.title || "Link thumbnail"}
               fill
-              className="object-cover"
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
               onError={() => setImageFailed(true)}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
@@ -146,26 +156,26 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
         )}
 
         {preview.title ? (
-          <p className="text-sm font-semibold text-slate-800 line-clamp-1">
+          <p className="line-clamp-1 text-sm font-semibold text-slate-100">
             {preview.title}
           </p>
         ) : (
           preview.domain && (
-            <p className="text-sm font-semibold text-slate-800">
+            <p className="text-sm font-semibold text-slate-100">
               {preview.domain}
             </p>
           )
         )}
 
         {preview.description && (
-          <p className="mt-1 text-sm text-slate-600 line-clamp-2">
+          <p className="mt-1 line-clamp-2 text-sm text-slate-400">
             {preview.description}
           </p>
         )}
 
-        <div className="mt-2 flex items-center justify-between gap-3 text-[11px] uppercase tracking-[0.24em] text-slate-400">
+        <div className="mt-2 flex items-center justify-between gap-3 text-[11px] uppercase tracking-[0.24em] text-slate-500">
           <span>{preview.domain}</span>
-          <span className="text-slate-500">Open preview</span>
+          <span className="text-slate-400">Open preview</span>
         </div>
       </button>
 
@@ -175,22 +185,22 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
           onClick={() => setIsExpanded(false)}
         >
           <div
-            className="relative w-full max-w-3xl flex flex-col max-h-[90vh] overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl"
+            className="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-[28px] border border-white/10 bg-slate-900/95 shadow-2xl"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="flex shrink-0 items-center justify-end border-b border-slate-200 px-5 py-3">
+            <div className="flex shrink-0 items-center justify-end border-b border-white/10 bg-slate-950/60 px-5 py-3">
               <button
                 type="button"
                 onClick={() => setIsExpanded(false)}
-                className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
+                className="shrink-0 rounded-full border border-white/10 bg-slate-800 px-3 py-1 text-sm font-semibold text-slate-200 transition hover:bg-slate-700"
               >
                 Close
               </button>
             </div>
 
-            <div className="space-y-4 px-5 py-5 overflow-y-auto flex-1">
+            <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
               {showImage && (
-                <div className="overflow-hidden rounded-3xl bg-slate-100 relative h-64 w-full">
+                <div className="relative h-64 w-full overflow-hidden rounded-[24px] bg-slate-100">
                   <Image
                     src={preview.image!}
                     alt={preview.title || "Link thumbnail"}
@@ -203,22 +213,22 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
               )}
 
               <div className="min-w-0">
-                <p className="text-xl font-semibold text-slate-900 wrap-break-word">
+                <p className="text-xl font-semibold text-slate-100 wrap-break-word">
                   {preview.title || title}
                 </p>
                 {preview.domain && (
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-400">
                     {preview.domain}
                   </p>
                 )}
               </div>
 
               {preview.description && (
-                <p className="text-sm text-slate-600">{preview.description}</p>
+                <p className="text-sm text-slate-400">{preview.description}</p>
               )}
 
               {preview.canonical && (
-                <div className="rounded-2xl bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                <div className="rounded-2xl bg-slate-800/80 px-3 py-2 text-sm text-slate-300">
                   <span className="font-semibold">Canonical URL:</span>{" "}
                   <span className="break-all">{preview.canonical}</span>
                 </div>
@@ -228,12 +238,12 @@ export default function LinkPreview({ url, title }: LinkPreviewProps) {
                 {Object.entries(preview.metadata ?? {}).map(([key, value]) => (
                   <div
                     key={key}
-                    className="rounded-xl bg-slate-50 px-3 py-2 text-sm"
+                    className="rounded-xl bg-slate-800/80 px-3 py-2 text-sm"
                   >
-                    <div className="text-[11px] uppercase tracking-[0.24em] text-slate-400">
+                    <div className="text-[11px] uppercase tracking-[0.24em] text-slate-500">
                       {key}
                     </div>
-                    <div className="mt-1 text-slate-700 break-all">{value}</div>
+                    <div className="mt-1 break-all text-slate-300">{value}</div>
                   </div>
                 ))}
               </div>

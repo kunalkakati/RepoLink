@@ -61,13 +61,16 @@ const Home = () => {
         <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-10">
           <IntroPage />
           <div className="mb-6 mt-5">
-            <div className="rounded-2xl bg-white/60 backdrop-blur-md border border-slate-200 p-6 shadow-md">
+            <div className="glass-panel p-6 sm:p-7">
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                  <div className="inline-flex items-center rounded-full border border-blue-400/30 bg-blue-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-blue-300">
+                    Your library
+                  </div>
+                  <h1 className="mt-3 text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-50">
                     Saved Links
                   </h1>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-400">
                     Showing {links.length}{" "}
                     {links.length === 1 ? "link" : "links"} from the database.
                   </p>
@@ -86,7 +89,7 @@ const Home = () => {
                         setCurrentPage(1);
                       }}
                       placeholder="Search by name"
-                      className="w-full rounded-full border border-slate-200 bg-white/90 px-10 py-2 text-sm text-slate-700 outline-none transition focus:border-slate-400"
+                      className="w-full rounded-full border border-white/10 bg-slate-900/70 px-10 py-2.5 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-blue-400/40 focus:ring-2 focus:ring-blue-500/20"
                     />
                     {nameQuery && (
                       <button
@@ -95,7 +98,7 @@ const Home = () => {
                           setNameQuery("");
                           setCurrentPage(1);
                         }}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-600 hover:bg-slate-100"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 hover:bg-slate-800"
                       >
                         <XIcon size={14} />
                       </button>
@@ -105,7 +108,7 @@ const Home = () => {
                   <div className="flex flex-col gap-2 w-full md:flex-row md:items-center md:w-auto">
                     <label
                       htmlFor="sortOrder"
-                      className="text-sm font-medium text-slate-700"
+                      className="text-sm font-medium text-slate-300"
                     >
                       Sort
                     </label>
@@ -122,7 +125,7 @@ const Home = () => {
                         );
                         setCurrentPage(1);
                       }}
-                      className="w-full rounded-full border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-slate-500 md:w-auto"
+                      className="w-full rounded-full border border-white/10 bg-slate-900/70 px-3 py-2.5 text-sm text-slate-100 outline-none transition focus:border-blue-400/40 focus:ring-2 focus:ring-blue-500/20 md:w-auto"
                     >
                       <option value="newest">Newest</option>
                       <option value="oldest">Oldest</option>

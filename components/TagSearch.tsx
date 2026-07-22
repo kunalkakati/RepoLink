@@ -112,16 +112,16 @@ export default function TagSearch({
   return (
     <>
       {allTags.length > 0 && (
-        <div className="mt-8 rounded-3xl border border-border bg-slate-50/80 p-4 shadow-sm shadow-slate-100">
+        <div className="mt-8 rounded-[28px] border border-white/10 bg-slate-900/70 p-4 shadow-[0_20px_60px_-24px_rgba(0,0,0,0.6)] backdrop-blur-xl">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm font-semibold text-slate-700">
+              <span className="text-sm font-semibold text-slate-300">
                 Filter by tag:
               </span>
               <button
                 type="button"
                 onClick={() => setSelectedTags([])}
-                className={`rounded-full px-3 py-1.5 text-sm font-semibold transition ${selectedTags.length > 0 ? "bg-white text-slate-700 hover:bg-slate-100" : "bg-slate-900 text-white hover:bg-slate-800"}`}
+                className={`rounded-full px-3 py-1.5 text-sm font-semibold transition ${selectedTags.length > 0 ? "bg-slate-800 text-slate-100 hover:bg-slate-700" : "bg-blue-500 text-slate-950 hover:bg-blue-400"}`}
               >
                 All
               </button>
@@ -132,21 +132,21 @@ export default function TagSearch({
                 value={tagQuery}
                 onChange={(e) => setTagQuery(e.target.value)}
                 placeholder="Search tags"
-                className="w-full min-w-0 rounded-full border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 outline-none transition focus:border-slate-500 sm:w-auto"
+                className="w-full min-w-0 rounded-full border border-white/10 bg-slate-950/70 px-3 py-1.5 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-blue-400/40 sm:w-auto"
               />
 
-              <div className="flex flex-wrap items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600 shadow-sm">
+              <div className="flex flex-wrap items-center gap-2 rounded-full border border-white/10 bg-slate-950/70 px-3 py-1.5 text-sm text-slate-300 shadow-sm">
                 <button
                   type="button"
                   onClick={() => setMatchMode("any")}
-                  className={`rounded-full px-3 py-1 transition ${matchMode === "any" ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100"}`}
+                  className={`rounded-full px-3 py-1 transition ${matchMode === "any" ? "bg-blue-500 text-slate-950" : "text-slate-300 hover:bg-slate-800"}`}
                 >
                   Any
                 </button>
                 <button
                   type="button"
                   onClick={() => setMatchMode("all")}
-                  className={`rounded-full px-3 py-1 transition ${matchMode === "all" ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100"}`}
+                  className={`rounded-full px-3 py-1 transition ${matchMode === "all" ? "bg-blue-500 text-slate-950" : "text-slate-300 hover:bg-slate-800"}`}
                 >
                   All
                 </button>
@@ -163,20 +163,20 @@ export default function TagSearch({
                     key={tag}
                     type="button"
                     onClick={() => toggleSelectedTag(tag)}
-                    className={`rounded-full border border-slate-200 px-3 py-1.5 text-sm font-semibold transition shadow-sm ${isSelected ? "bg-slate-900 text-white shadow-blue-200/60 hover:bg-slate-800" : `${getTagVariant(tag)} hover:scale-[1.02] hover:shadow-sm`}`}
+                    className={`rounded-full border border-white/10 px-3 py-1.5 text-sm font-semibold transition shadow-sm ${isSelected ? "bg-blue-500 text-slate-950 shadow-blue-500/30 hover:bg-blue-400" : `${getTagVariant(tag)} hover:scale-[1.02] hover:shadow-sm`}`}
                   >
                     {tag}
                   </button>
                 );
               })
             ) : (
-              <span className="text-sm text-slate-500">
+              <span className="text-sm text-slate-400">
                 No tag matches for {tagQuery}.
               </span>
             )}
           </div>
 
-          <p className="mt-3 text-sm text-slate-500">
+          <p className="mt-3 text-sm text-slate-400">
             {selectedTags.length > 0
               ? `Showing links matching ${matchMode === "all" ? "all" : "any"} of: ${selectedTags.join(", ")}.`
               : "Showing all saved links."}

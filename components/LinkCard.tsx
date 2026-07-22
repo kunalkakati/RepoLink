@@ -73,14 +73,14 @@ export default function LinkCard({
 
   return (
     <>
-      <Card className="group relative flex flex-col w-full bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-visible">
+      <Card className="group relative flex flex-col w-full overflow-visible rounded-[20px] border border-white/10 bg-slate-900/80 shadow-[0_18px_45px_-20px_rgba(0,0,0,0.55)] soft-hover">
         {/* Top accent bar */}
-        <div className="h-0.5 w-full bg-linear-to-r from-slate-300 via-slate-400 to-slate-300 group-hover:from-blue-400 group-hover:via-indigo-500 group-hover:to-blue-400 transition-all duration-300" />
+        <div className="h-1 w-full rounded-t-[20px] bg-linear-to-r from-slate-600 via-slate-500 to-slate-400 transition-all duration-300 group-hover:from-blue-500 group-hover:via-indigo-500 group-hover:to-violet-500" />
 
         {/* Header */}
-        <CardHeader className="px-4 pt-3 pb-1.5">
+        <CardHeader className="px-4 pt-4 pb-1.5">
           <div className="flex items-center justify-between gap-2">
-            <h3 className="text-2xl font-bold text-slate-800 leading-snug tracking-tight line-clamp-1 flex-1 min-w-0">
+            <h3 className="text-2xl font-bold text-slate-100 leading-snug tracking-tight line-clamp-1 flex-1 min-w-0">
               {title}
             </h3>
 
@@ -89,7 +89,7 @@ export default function LinkCard({
                 type="button"
                 onClick={handleCopy}
                 aria-label={copied ? "Copied" : "Copy name"}
-                className="h-6 w-6 flex items-center cursor-pointer justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all duration-150"
+                className="flex h-7 w-7 items-center justify-center rounded-full text-slate-400 transition-all duration-150 hover:bg-slate-800 hover:text-slate-100"
               >
                 {copied ? (
                   <Check className="h-3 w-3 text-emerald-500" />
@@ -104,7 +104,7 @@ export default function LinkCard({
                     type="button"
                     onClick={() => setIsEditModalOpen(true)}
                     aria-label="Edit link"
-                    className="h-6 w-6 flex items-center justify-center rounded-md text-blue-500 hover:bg-blue-50 transition-all duration-150"
+                    className="flex h-7 w-7 items-center justify-center rounded-full text-blue-400 transition-all duration-150 hover:bg-blue-500/10"
                   >
                     <Pencil className="h-3 w-3" />
                   </button>
@@ -112,7 +112,7 @@ export default function LinkCard({
                     type="button"
                     onClick={handleDelete}
                     aria-label="Delete link"
-                    className="h-6 w-6 flex items-center justify-center rounded-md text-red-500 hover:bg-red-50 transition-all duration-150"
+                    className="flex h-7 w-7 items-center justify-center rounded-full text-rose-400 transition-all duration-150 hover:bg-rose-500/10"
                   >
                     <Trash2 className="h-3 w-3" />
                   </button>
@@ -123,7 +123,7 @@ export default function LinkCard({
         </CardHeader>
 
         {/* Body */}
-        <CardContent className="px-4 py-0 flex flex-col gap-2 flex-1">
+        <CardContent className="flex flex-1 flex-col gap-2 px-4 py-0">
           <LinkPreview url={url} title={title} />
 
           {/* Tags */}
@@ -134,7 +134,7 @@ export default function LinkCard({
                   key={tag}
                   type="button"
                   onClick={() => onTagClick?.(tag)}
-                  className={`rounded-full bg-linear-to-r ${getTagClasses(tag)} px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] shadow-sm ring-1 ring-slate-200/70 transition-all duration-200 hover:scale-[1.03] hover:shadow-md`}
+                  className={`rounded-full bg-linear-to-r ${getTagClasses(tag)} px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] shadow-sm ring-1 ring-white/10 transition-all duration-200 hover:scale-[1.03] hover:shadow-md`}
                 >
                   {tag}
                 </button>
@@ -147,12 +147,12 @@ export default function LinkCard({
 
         {/* Footer */}
         <CardFooter className="px-4 pt-3 pb-4">
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid w-full gap-3 sm:grid-cols-2">
             <Link
               href={url}
               target="_blank"
               rel="noreferrer"
-              className="group/btn relative inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-linear-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-700 hover:via-blue-800 hover:to-indigo-800 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
+              className="group/btn relative inline-flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-2xl bg-linear-to-r from-blue-600 via-blue-700 to-indigo-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-500/40 active:scale-[0.98]"
             >
               <span className="relative z-10">Open Link</span>
               <ExternalLink className="h-4 w-4 relative z-10 group-hover/btn:translate-x-0.5 transition-transform duration-200" />
@@ -163,7 +163,7 @@ export default function LinkCard({
               href={`${previewBaseUrl}/${encodeURIComponent(title)}`}
               target="_blank"
               rel="noreferrer"
-              className="group/btn relative inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 text-white hover:bg-slate-800 px-3 py-2 text-xs font-semibold shadow-sm shadow-slate-400/15 transition-all duration-300 hover:shadow-md hover:scale-[1.01] active:scale-[0.99] overflow-hidden"
+              className="group/btn relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl bg-slate-800 px-3 py-2 text-xs font-semibold text-white shadow-sm shadow-slate-950/30 transition-all duration-300 hover:scale-[1.01] hover:bg-slate-700 hover:shadow-md active:scale-[0.99]"
             >
               <span className="relative z-10">Trailer</span>
               <Play className="h-3.5 w-3.5 relative z-10 group-hover/btn:translate-x-0.5 transition-transform duration-200" />
