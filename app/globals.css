@@ -147,6 +147,19 @@
     @apply rounded-[28px] border border-white/10 bg-white/10 shadow-[0_25px_70px_-30px_rgba(0,0,0,0.7)] backdrop-blur-2xl;
   }
 
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
   .soft-hover {
     @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_22px_55px_-22px_rgba(124,147,255,0.55)];
   }
