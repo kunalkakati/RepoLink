@@ -551,49 +551,62 @@ const Home = () => {
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Mobile Bottom Navigation */}
-            <div className="fixed bottom-0 left-0 right-0 z-50 bg-linear-to-t from-slate-900 via-slate-900 to-slate-900/95 border-t border-white/10 backdrop-blur-md shadow-2xl">
-              <div className="flex items-center justify-around h-20 px-2 safe-bottom">
-                <button
-                  onClick={() => setMobileTab("links")}
-                  className={`flex flex-col items-center justify-center w-16 h-16 rounded-2xl transition-all ${
-                    mobileTab === "links"
-                      ? "bg-blue-500/20 text-blue-400"
-                      : "text-slate-400 hover:text-slate-300"
-                  }`}
-                  aria-label="Links"
-                >
-                  <Grid3x3 size={24} />
-                  <span className="text-xs font-medium mt-1">Links</span>
-                </button>
+          {/* Mobile Bottom Navigation - Outside Main Container */}
+          <div
+            className="md:hidden z-50 bg-linear-to-t from-slate-900 via-slate-900 to-slate-900/95 border-t border-white/10 backdrop-blur-md shadow-2xl"
+            style={{
+              position: "fixed",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              top: "auto",
+              width: "100%",
+              height: "auto",
+              display: "block",
+              zIndex: 9999,
+            }}
+          >
+            <div className="flex items-center justify-around h-20 px-2 safe-bottom">
+              <button
+                onClick={() => setMobileTab("links")}
+                className={`flex flex-col items-center justify-center w-16 h-16 rounded-2xl transition-all ${
+                  mobileTab === "links"
+                    ? "bg-blue-500/20 text-blue-400"
+                    : "text-slate-400 hover:text-slate-300"
+                }`}
+                aria-label="Links"
+              >
+                <Grid3x3 size={24} />
+                <span className="text-xs font-medium mt-1">Links</span>
+              </button>
 
-                <button
-                  onClick={() => setMobileTab("filters")}
-                  className={`flex flex-col items-center justify-center w-16 h-16 rounded-2xl transition-all ${
-                    mobileTab === "filters"
-                      ? "bg-blue-500/20 text-blue-400"
-                      : "text-slate-400 hover:text-slate-300"
-                  }`}
-                  aria-label="Filters"
-                >
-                  <Filter size={24} />
-                  <span className="text-xs font-medium mt-1">Tags</span>
-                </button>
+              <button
+                onClick={() => setMobileTab("filters")}
+                className={`flex flex-col items-center justify-center w-16 h-16 rounded-2xl transition-all ${
+                  mobileTab === "filters"
+                    ? "bg-blue-500/20 text-blue-400"
+                    : "text-slate-400 hover:text-slate-300"
+                }`}
+                aria-label="Filters"
+              >
+                <Filter size={24} />
+                <span className="text-xs font-medium mt-1">Tags</span>
+              </button>
 
-                <button
-                  onClick={() => setMobileTab("settings")}
-                  className={`flex flex-col items-center justify-center w-16 h-16 rounded-2xl transition-all ${
-                    mobileTab === "settings"
-                      ? "bg-blue-500/20 text-blue-400"
-                      : "text-slate-400 hover:text-slate-300"
-                  }`}
-                  aria-label="Settings"
-                >
-                  <Settings size={24} />
-                  <span className="text-xs font-medium mt-1">Sort</span>
-                </button>
-              </div>
+              <button
+                onClick={() => setMobileTab("settings")}
+                className={`flex flex-col items-center justify-center w-16 h-16 rounded-2xl transition-all ${
+                  mobileTab === "settings"
+                    ? "bg-blue-500/20 text-blue-400"
+                    : "text-slate-400 hover:text-slate-300"
+                }`}
+                aria-label="Settings"
+              >
+                <Settings size={24} />
+                <span className="text-xs font-medium mt-1">Sort</span>
+              </button>
             </div>
           </div>
         </>
