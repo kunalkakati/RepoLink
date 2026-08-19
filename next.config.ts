@@ -8,6 +8,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "**",
       },
+      {
+        protocol: "https",
+        hostname: "www.javbus.com",
+      },
+      {
+        protocol: "https",
+        hostname: "pics.dmm.co.jp",
+      },
     ],
   },
 };
