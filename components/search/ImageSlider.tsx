@@ -87,7 +87,7 @@ export default function ImageSlider({
         className="relative flex h-[calc(100dvh-1rem)] max-h-[820px] w-full max-w-6xl flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-900/95 p-3 shadow-2xl shadow-black/50 sm:h-[calc(100dvh-2.5rem)] sm:rounded-3xl sm:p-5"
         onClick={(e) => e.stopPropagation()} // Prevent clicks on image from closing modal
       >
-        <div className="relative flex min-h-0 w-full flex-1 items-center justify-center rounded-2xl bg-[#050816]">
+        <div className="relative flex h-[calc(100dvh-10rem)] min-h-[240px] w-full max-h-[680px] items-center justify-center rounded-2xl bg-[#050816]">
           {failedImageIndex === currentIndex ? (
             <p className="px-6 text-center text-sm text-slate-400">
               This image could not be loaded.
@@ -97,10 +97,11 @@ export default function ImageSlider({
               key={images[currentIndex]}
               src={images[currentIndex]}
               alt={`Slide ${currentIndex + 1}`}
-              fill
+              width={1600}
+              height={1000}
               unoptimized
               sizes="(max-width: 640px) 94vw, 90vw"
-              className="rounded-2xl object-contain"
+              className="h-full w-full rounded-2xl object-contain"
               onError={() => setFailedImageIndex(currentIndex)}
             />
           )}
@@ -137,14 +138,15 @@ export default function ImageSlider({
             }}
             aria-label={`Show image ${index + 1}`}
             aria-current={index === currentIndex}
-            className={`relative size-12 shrink-0 overflow-hidden rounded-lg border-2 transition sm:size-14 ${index === currentIndex ? "border-cyan-300" : "border-transparent opacity-55 hover:opacity-100"}`}
+            className={`relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border-2 transition sm:h-14 sm:w-14 ${index === currentIndex ? "border-cyan-300" : "border-transparent opacity-55 hover:opacity-100"}`}
           >
             <Image
               src={image}
               alt=""
-              fill
+              width={112}
+              height={84}
               unoptimized
-              className="object-cover"
+              className="h-full w-full object-cover"
             />
           </button>
         ))}
