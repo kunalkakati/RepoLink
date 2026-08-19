@@ -80,9 +80,14 @@ export default function LinkCard({
         {/* Header */}
         <CardHeader className="px-4 pt-4 pb-1.5">
           <div className="flex items-center justify-between gap-2">
-            <h3 className="text-2xl font-bold text-slate-100 leading-snug tracking-tight line-clamp-1 flex-1 min-w-0">
+            <Link
+              href={url}
+              target="_blank"
+              rel="noreferrer"
+              className="text-2xl font-bold text-slate-100 leading-snug tracking-tight line-clamp-1 flex-1 min-w-0"
+            >
               {title}
-            </h3>
+            </Link>
 
             <div className="flex items-center gap-1 shrink-0">
               <button
@@ -149,12 +154,12 @@ export default function LinkCard({
         <CardFooter className="px-4 pt-3 pb-4">
           <div className="grid w-full gap-3 sm:grid-cols-2">
             <Link
-              href={url}
+              href={`/search/${encodeURIComponent(title)}`}
               target="_blank"
               rel="noreferrer"
               className="group/btn relative inline-flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-2xl bg-linear-to-r from-blue-600 via-blue-700 to-indigo-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-500/40 active:scale-[0.98]"
             >
-              <span className="relative z-10">Open Link</span>
+              <span className="relative z-10">Open</span>
               <ExternalLink className="h-4 w-4 relative z-10 group-hover/btn:translate-x-0.5 transition-transform duration-200" />
               <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
             </Link>
